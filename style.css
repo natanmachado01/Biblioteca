@@ -1,0 +1,136 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #00ff6a;
+    font-family: "Consolas", "Courier New", monospace;
+  height: 100vh;
+    display: flex;
+  align-items: center;
+    justify-content: center;
+  }
+  
+  .terminal {
+    margin: 16px;
+    border-radius: 6px;
+  overflow-y: auto;
+    border: 1px solid #00aa55;
+    background: #000;
+    width: 100%;
+    max-width: 960px;
+  max-height: 96vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .terminal-header {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    background: #111;
+    border-bottom: 1px solid #004422;
+  }
+  
+  .dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+  
+  .dot.red {
+    background: #ff5f56;
+  }
+  .dot.yellow {
+    background: #ffbd2e;
+  }
+  .dot.green {
+    background: #27c93f;
+  }
+  
+  .title {
+    margin-left: 8px;
+    color: #00ff6a;
+  }
+  
+  .terminal-body {
+    padding: 8px 10px 10px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .output {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  
+  .line {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin-bottom: 2px;
+  }
+  
+  .prompt {
+    color: #00ff6a;
+    margin-right: 6px;
+  }
+  
+  .input-line {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    border-top: 1px solid #004422;
+    padding-top: 6px;
+    margin-top: 4px;
+  }
+  
+  #search-input {
+    flex: 1;
+    background: #000;
+    border: none;
+    outline: none;
+    color: #00ff6a;
+    font-family: inherit;
+    font-size: 14px;
+  }
+  
+  #search-input::placeholder {
+    color: #007744;
+  }
+  
+  #source-select {
+    background: #000;
+    color: #00ff6a;
+    border: 1px solid #004422;
+    font-family: inherit;
+    font-size: 12px;
+    padding: 2px 4px;
+  }
+  
+  .hidden-button {
+    display: none;
+  }
+  
+  .result-source {
+    color: #00bfff;
+  }
+  
+  .result-title {
+    color: #00ff6a;
+    font-weight: bold;
+  }
+  
+  .result-snippet {
+    color: #00cc55;
+  }
+  
+  .error-message {
+    color: #ff5555;
+  }

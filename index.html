@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>WikiTerminal</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="terminal">
+    <div class="terminal-header">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+      <span class="title">C:\> WikiTerminal</span>
+    </div>
+
+    <div class="terminal-body">
+      <div class="output" id="output">
+        <div class="line">
+          <span class="prompt">C:\></span>
+          <span>Bem-vindo ao WikiTerminal.</span>
+        </div>
+        <div class="line">
+          <span class="prompt">C:\></span>
+          <span>Digite "help" para ver os comandos disponíveis.</span>
+        </div>
+      </div>
+
+      <form id="search-form" class="input-line">
+        <span class="prompt">C:\></span>
+        <input
+          id="search-input"
+          type="text"
+          autocomplete="off"
+          placeholder="search &lt;termo&gt;"
+        />
+        <button type="submit" class="hidden-button">Comando</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

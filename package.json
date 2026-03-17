@@ -1,0 +1,12 @@
+{
+  "name": "wikitterminal-local",
+  "version": "1.0.0",
+  "description": "Terminal-like interface to search and read Wikipedia and Worldcraft articles via localhost.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

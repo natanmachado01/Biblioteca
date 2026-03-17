@@ -1,0 +1,16 @@
+[
+  {
+    "id": "wc-1",
+    "title": "Introdução ao Worldcraft",
+    "summary": "Visão geral fictícia sobre o universo Worldcraft, suas mecânicas e principais conceitos.",
+    "content": "Este é um artigo de exemplo sobre o Worldcraft. Aqui você pode colocar o texto completo do artigo, como se fosse uma página de wiki. Substitua e amplie este conteúdo com os artigos reais que quiser indexar.",
+    "tags": ["introducao", "worldcraft", "tutorial"]
+  },
+  {
+    "id": "wc-2",
+    "title": "Guia de Sobrevivência",
+    "summary": "Estratégias iniciais para sobreviver no mundo de Worldcraft.",
+    "content": "Outro artigo de exemplo. Use este arquivo JSON como um pequeno banco de dados estático, adicionando objetos com id, title, summary e content.",
+    "tags": ["guia", "sobrevivencia", "iniciante"]
+  }
+]
