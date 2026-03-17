@@ -239,7 +239,7 @@ async function searchWikipedia(term) {
       printResultItem(index, item.title, item.snippet);
     });
   } catch (err) {
-    printError("Erro ao buscar na Wikipedia: " + err.message);
+    printError("Falha de busca no repositório da Lógica: " + err.message);
   }
 }
 
@@ -268,7 +268,7 @@ async function searchWorldcraft(term) {
       printResultItem(index, item.title, item.snippet);
     });
   } catch (err) {
-    printError("Erro ao buscar na Worldcraft: " + err.message);
+    printError("Falha de busca no repositório da Lógica: " + err.message);
   }
 }
 
@@ -279,7 +279,7 @@ async function openArticle(source, id) {
     const data = await res.json();
 
     if (!data || !data.title) {
-      printError("Artigo não encontrado.");
+      printError("Informação não encontrada na Lógica.");
       return;
     }
 
@@ -288,16 +288,16 @@ async function openArticle(source, id) {
     lines.forEach((line) => {
       printLine(line);
     });
-    printLine("=== fim do artigo ===");
+    printLine("=== fim ===");
   } catch (err) {
-    printError("Erro ao abrir artigo: " + err.message);
+    printError("Falha ao abrir informação: " + err.message);
   }
 }
 
 function printHelp() {
   printLine("Comandos disponíveis:");
-  printLine('  search <termo>           -> busca em Wikipedia e Worldcraft');
-  printLine('  open <id> ou open #<n>   -> abre artigo da última busca');
+  printLine('  search <termo>           -> busca em repositório da Lógica');
+  printLine('  open <id> ou open #<n>   -> abre informação da última busca');
   printLine('  clear / cls  -> limpa a tela');
   printLine('  help / ?     -> mostra esta ajuda');
 }
