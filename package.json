@@ -1,5 +1,5 @@
 {
-  "name": "wikitterminal-local",
+  "name": "Terminal - Lógica",
   "version": "1.0.0",
   "description": "Terminal-like interface to search and read Wikipedia and Worldcraft articles via localhost.",
   "main": "server.js",
@@ -7,6 +7,8 @@
     "start": "node server.js"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.0",
+    "dotenv": "^16.4.5",
     "express": "^4.21.2"
   }
 }

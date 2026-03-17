@@ -17,7 +17,7 @@
   .terminal {
     margin: 16px;
     border-radius: 6px;
-  overflow-y: auto;
+  overflow: hidden;
     border: 1px solid #00aa55;
     background: #000;
     width: 100%;
@@ -63,12 +63,14 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+  min-height: 0;
   }
   
   .output {
     flex: 1;
     overflow-y: auto;
     padding-right: 4px;
+  min-height: 0;
   }
   
   .line {
@@ -105,21 +107,8 @@
     color: #007744;
   }
   
-  #source-select {
-    background: #000;
-    color: #00ff6a;
-    border: 1px solid #004422;
-    font-family: inherit;
-    font-size: 12px;
-    padding: 2px 4px;
-  }
-  
   .hidden-button {
     display: none;
-  }
-  
-  .result-source {
-    color: #00bfff;
   }
   
   .result-title {

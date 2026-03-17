@@ -1,16 +1,58 @@
 [
   {
     "id": "wc-1",
-    "title": "Introdução ao Worldcraft",
-    "summary": "Visão geral fictícia sobre o universo Worldcraft, suas mecânicas e principais conceitos.",
-    "content": "Este é um artigo de exemplo sobre o Worldcraft. Aqui você pode colocar o texto completo do artigo, como se fosse uma página de wiki. Substitua e amplie este conteúdo com os artigos reais que quiser indexar.",
-    "tags": ["introducao", "worldcraft", "tutorial"]
+    "title": "Rogério Fontes",
+      "summary": "Atual dono do antiquário Fontes e Filhos, homem sozinho e sem filhos. Um zelote do passado, um mero fantasma.",
+      "content": "Homem adulto de 45 anos, possui cabelos castanhos com as raízes grisalhas por conta do estresse. Sempre está com um sorriso no rosto, mas o olhar deixa trespassar o sentimento de solidão e cansaço. Não tem nenhum tipo de relação com ninguém, apenas com o próprio passado. ",
+    "tags": ["Competidor"]
   },
   {
     "id": "wc-2",
-    "title": "Guia de Sobrevivência",
-    "summary": "Estratégias iniciais para sobreviver no mundo de Worldcraft.",
-    "content": "Outro artigo de exemplo. Use este arquivo JSON como um pequeno banco de dados estático, adicionando objetos com id, title, summary e content.",
-    "tags": ["guia", "sobrevivencia", "iniciante"]
+    "title": "Charles Barbosa",
+    "summary": "Folclorista, viúvo e pai de uma filha a qual ele não lembra mais o nome.",
+    "content": "Homem adulto que parece estar na casa dos 60 anos, antes se portava como um velho louco com memórias fragmentadas. Porém, após aceitar o acordo de Francisca, reconquistou seu passado e retornou ao patamar de competidor do Festival de Temperança.",
+    "tags": ["Eco", "Competidor" ]
+  },
+  {
+    "id": "wc-x",
+    "title": "Placeholder",
+      "summary": "Placeholder",
+      "content": "Placeholder",
+    "tags": ["Placeholder"]
+  },
+  {
+    "id": "wc-x",
+    "title": "Placeholder",
+      "summary": "Placeholder",
+      "content": "Placeholder",
+    "tags": ["Placeholder"]
+  },
+  {
+    "id": "wc-x",
+    "title": "Placeholder",
+      "summary": "Placeholder",
+      "content": "Placeholder",
+    "tags": ["Placeholder"]
+  },
+  {
+    "id": "wc-x",
+    "title": "Placeholder",
+      "summary": "Placeholder",
+      "content": "Placeholder",
+    "tags": ["Placeholder"]
+  },
+  {
+    "id": "wc-x",
+    "title": "Placeholder",
+      "summary": "Placeholder",
+      "content": "Placeholder",
+    "tags": ["Placeholder"]
+  },
+  {
+    "id": "wc-x",
+    "title": "Placeholder",
+      "summary": "Placeholder",
+      "content": "Placeholder",
+    "tags": ["Placeholder"]
   }
 ]

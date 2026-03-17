@@ -2,6 +2,10 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 
+require("dotenv").config();
+
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -21,6 +25,7 @@ function loadWorldcraftDB() {
 
 // Middleware estático para servir index.html, script.js, style.css, etc.
 app.use(express.static(__dirname));
+app.use(express.json({ limit: "1mb" }));
 
 // --- Rotas de API ---
 
@@ -40,7 +45,7 @@ app.get("/api/search/wikipedia", async (req, res) => {
     if (!response.ok) {
       return res
         .status(response.status)
-        .json({ error: "Falha ao consultar Wikipedia." });
+        .json({ error: "Falha ao consultar a Lógica." });
     }
 
     const data = await response.json();
@@ -54,8 +59,8 @@ app.get("/api/search/wikipedia", async (req, res) => {
 
     res.json({ results: normalized });
   } catch (err) {
-    console.error("Erro na busca Wikipedia:", err);
-    res.status(500).json({ error: "Erro interno ao consultar Wikipedia." });
+    console.error("Erro na busca da Lógica:", err);
+    res.status(500).json({ error: "Erro interno ao consultar a Lógica" });
   }
 });
 
@@ -75,14 +80,14 @@ app.get("/api/article/wikipedia/:pageId", async (req, res) => {
     if (!response.ok) {
       return res
         .status(response.status)
-        .json({ error: "Falha ao carregar artigo da Wikipedia." });
+        .json({ error: "Falha ao carregar informação da Lógica." });
     }
     const data = await response.json();
     const pages = data.query && data.query.pages;
     const page = pages && pages[pageId];
 
     if (!page) {
-      return res.status(404).json({ error: "Artigo não encontrado." });
+      return res.status(404).json({ error: "Informação não encontrada." });
     }
 
     res.json({
@@ -91,8 +96,8 @@ app.get("/api/article/wikipedia/:pageId", async (req, res) => {
       content: page.extract || "",
     });
   } catch (err) {
-    console.error("Erro ao buscar artigo Wikipedia:", err);
-    res.status(500).json({ error: "Erro interno ao carregar artigo." });
+    console.error("Erro ao buscar informação da Lógica:", err);
+    res.status(500).json({ error: "Erro interno ao carregar informação." });
   }
 });
 
@@ -131,7 +136,7 @@ app.get("/api/article/worldcraft/:id", (req, res) => {
   const db = loadWorldcraftDB();
   const article = db.find((item) => item.id === id);
   if (!article) {
-    return res.status(404).json({ error: "Artigo não encontrado." });
+    return res.status(404).json({ error: "Informação não encontrada." });
   }
 
   res.json({
@@ -139,6 +144,52 @@ app.get("/api/article/worldcraft/:id", (req, res) => {
     title: article.title,
     content: article.content,
   });
+});
+
+// IA (Gemini) - respostas sobre Worldcraft
+app.post("/api/ai/worldcraft", async (req, res) => {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({
+      error:
+        "GEMINI_API_KEY não configurada. Crie um arquivo .env com GEMINI_API_KEY=<sua_chave>.",
+    });
+  }
+
+  const question = (req.body && req.body.question) || "";
+  const context = (req.body && req.body.context) || "";
+
+  if (!question || typeof question !== "string") {
+    return res.status(400).json({ error: "Campo 'question' é obrigatório." });
+  }
+
+  try {
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const modelName = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+    const model = genAI.getGenerativeModel({ model: modelName });
+
+    const prompt = [
+      "Você é um assistente dentro de um terminal. Responda curto e direto.",
+      "Contexto: o usuário está lendo/pesquisando artigos do Worldcraft (uma base local).",
+      "Regras:",
+      "- Não invente fatos. Se faltar contexto, diga que não há informação suficiente no Worldcraft.",
+      "- Se possível, cite trechos do contexto fornecido de forma curta.",
+      "",
+      "Contexto Worldcraft (pode estar vazio):",
+      String(context || "").slice(0, 12000),
+      "",
+      "Pergunta do usuário:",
+      question,
+    ].join("\n");
+
+    const result = await model.generateContent(prompt);
+    const text = result?.response?.text?.() || "";
+
+    res.json({ text });
+  } catch (err) {
+    console.error("Erro Gemini Worldcraft:", err);
+    res.status(500).json({ error: "Erro ao consultar Gemini." });
+  }
 });
 
 app.listen(PORT, () => {

@@ -2,6 +2,14 @@ const form = document.getElementById("search-form");
 const input = document.getElementById("search-input");
 const output = document.getElementById("output");
 
+// Efeito de "digitação" (ms por caractere). Aumente para mais lento.
+// Observação: para saídas grandes (ex.: listas de resultados), usamos delay menor.
+const TYPE_DELAY_MS = 8;
+const TYPE_DELAY_FAST_MS = 0;
+
+// Fila para garantir que as linhas sejam impressas em ordem (digitadas)
+let printQueue = Promise.resolve();
+
 // Mantém em memória os últimos resultados de busca para permitir "open" por índice
 let lastResults = {
   source: null, // "wikipedia" | "worldcraft" | "both"
@@ -9,6 +17,9 @@ let lastResults = {
   worldcraft: [],
   combined: [], // [{ id, source }]
 };
+
+// Artigo aberto atualmente (para IA / contexto)
+let currentArticle = null; // { source, id, title, content }
 
 // Histórico de comandos digitados para navegação com setas
 const commandHistory = [];
@@ -20,7 +31,7 @@ form.addEventListener("submit", async (e) => {
   if (!raw) return;
 
   // ecoa o comando digitado
-  printLine(raw);
+  await printLine(raw);
 
   // adiciona ao histórico
   commandHistory.push(raw);
@@ -76,7 +87,7 @@ async function handleCommand(raw) {
     // search <termo>
     const term = parts.slice(1).join(" ");
     if (!term) {
-      printError('Uso: search <termo>');
+      await printError('Uso: search <termo>');
       return;
     }
     await search(term, "both");
@@ -99,13 +110,13 @@ async function handleCommand(raw) {
       if (ref.startsWith("#")) {
         const idx = parseInt(ref.slice(1), 10) - 1;
         if (Number.isNaN(idx) || idx < 0) {
-          printError("Índice inválido.");
+          await printError("Índice inválido.");
           return;
         }
         const arr =
           src === "wikipedia" ? lastResults.wikipedia : lastResults.worldcraft;
         if (!arr[idx]) {
-          printError("Nenhum resultado com esse índice.");
+          await printError("Nenhum resultado com esse índice.");
           return;
         }
         id = arr[idx].id;
@@ -117,7 +128,7 @@ async function handleCommand(raw) {
     // Forma simples: open <id> ou open #<indice>
     const ref = parts[1];
     if (!ref) {
-      printError('Uso: open <id> ou open #<indice>');
+      await printError('Uso: open <id> ou open #<indice>');
       return;
     }
 
@@ -126,19 +137,38 @@ async function handleCommand(raw) {
     if (ref.startsWith("#")) {
       const idx = parseInt(ref.slice(1), 10) - 1;
       if (Number.isNaN(idx) || idx < 0 || !lastResults.combined[idx]) {
-        printError("Nenhum resultado com esse índice.");
+        await printError("Nenhum resultado com esse índice.");
         return;
       }
       target = lastResults.combined[idx];
     } else {
       target = lastResults.combined.find((item) => item.id === ref) || null;
       if (!target) {
-        printError("Nenhum resultado com esse ID na última busca.");
+        await printError("Nenhum resultado com esse ID na última busca.");
         return;
       }
     }
 
     await openArticle(target.source, target.id);
+    return;
+  }
+
+  if (cmd === "ask") {
+    // IA (Gemini) - apenas para Worldcraft
+    const question = parts.slice(1).join(" ");
+    if (!question) {
+      await printError('Uso: ask <pergunta> (somente Worldcraft)');
+      return;
+    }
+
+    if (!currentArticle || currentArticle.source !== "worldcraft") {
+      await printError(
+        'Abra um artigo do Worldcraft primeiro (ex.: search <termo> e open #n).'
+      );
+      return;
+    }
+
+    await askWorldcraftAI(question, currentArticle);
     return;
   }
 
@@ -148,14 +178,19 @@ async function handleCommand(raw) {
   }
 
   if (cmd === "help" || cmd === "?") {
-    printHelp();
+    await printHelp();
     return;
   }
 
-  printError('Comando não reconhecido. Use "help" para ver os comandos.');
+  await printError('Comando não reconhecido. Use "help" para ver os comandos.');
 }
 
-function printLine(text, cssClass) {
+function enqueuePrint(fn) {
+  printQueue = printQueue.then(fn).catch(() => {});
+  return printQueue;
+}
+
+function createLine(cssClass) {
   const line = document.createElement("div");
   line.className = "line";
   if (cssClass) line.classList.add(cssClass);
@@ -165,53 +200,66 @@ function printLine(text, cssClass) {
   promptSpan.textContent = "C:\\>";
 
   const textSpan = document.createElement("span");
-  textSpan.textContent = text;
+  textSpan.textContent = "";
 
   line.appendChild(promptSpan);
   line.appendChild(textSpan);
   output.appendChild(line);
   output.scrollTop = output.scrollHeight;
+  return { line, textSpan };
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function typeText(el, text, delayMs = TYPE_DELAY_MS) {
+  const s = String(text ?? "");
+  for (let i = 0; i < s.length; i++) {
+    el.textContent += s[i];
+    if (delayMs > 0) await sleep(delayMs);
+  }
+}
+
+function printLine(text, cssClass) {
+  return enqueuePrint(async () => {
+    const { textSpan } = createLine(cssClass);
+    await typeText(textSpan, text, TYPE_DELAY_MS);
+    output.scrollTop = output.scrollHeight;
+  });
+}
+
+function printLineFast(text, cssClass) {
+  return enqueuePrint(async () => {
+    const { textSpan } = createLine(cssClass);
+    await typeText(textSpan, text, TYPE_DELAY_FAST_MS);
+    output.scrollTop = output.scrollHeight;
+  });
 }
 
 function printResultItem(index, title, snippet) {
-  const line = document.createElement("div");
-  line.className = "line";
-
-  const promptSpan = document.createElement("span");
-  promptSpan.className = "prompt";
-  promptSpan.textContent = "C:\\>";
-
-  const textSpan = document.createElement("span");
   const safeSnippet = (snippet || "")
     .replace(/<\/?[^>]+(>|$)/g, "")
     .replace(/\s+/g, " ")
     .trim();
-
-  textSpan.innerHTML =
-    `[#${index}] ` +
-    `<span class="result-title">${title}</span> - ` +
-    `<span class="result-snippet">${safeSnippet}</span>`;
-
-  line.appendChild(promptSpan);
-  line.appendChild(textSpan);
-  output.appendChild(line);
-  output.scrollTop = output.scrollHeight;
+  // Resultados podem ser muitos/longos; imprime sem delay para não "esconder" Worldcraft.
+  return printLineFast(`[#${index}] ${title} - ${safeSnippet}`);
 }
 
 
 function printError(message) {
-  printLine(message, "error-message");
+  return printLine(message, "error-message");
 }
 
 async function search(term, source) {
   lastResults = { source, wikipedia: [], worldcraft: [], combined: [] };
+  currentArticle = null;
 
-  if (source === "wikipedia" || source === "both") {
-    await searchWikipedia(term);
-  }
-  if (source === "worldcraft" || source === "both") {
-    await searchWorldcraft(term);
-  }
+  // Faz as buscas em paralelo, para evitar que uma saída longa atrase a outra.
+  const tasks = [];
+  if (source === "wikipedia" || source === "both") tasks.push(searchWikipedia(term));
+  if (source === "worldcraft" || source === "both") tasks.push(searchWorldcraft(term));
+  await Promise.all(tasks);
 }
 
 async function searchWikipedia(term) {
@@ -224,7 +272,7 @@ async function searchWikipedia(term) {
     const results = data.results || [];
 
     if (!results.length) {
-      printLine("Nenhum resultado encontrado.", "result-snippet");
+      await printLine("Nenhum resultado encontrado.");
       return;
     }
 
@@ -238,8 +286,9 @@ async function searchWikipedia(term) {
       });
       printResultItem(index, item.title, item.snippet);
     });
+    await printQueue;
   } catch (err) {
-    printError("Erro ao buscar na Wikipedia: " + err.message);
+    await printError("Erro ao buscar na Wikipedia: " + err.message);
   }
 }
 
@@ -253,7 +302,7 @@ async function searchWorldcraft(term) {
     const results = data.results || [];
 
     if (!results.length) {
-      printLine("Nenhum resultado encontrado.", "result-snippet");
+      await printLine("Nenhum resultado encontrado.");
       return;
     }
 
@@ -267,8 +316,9 @@ async function searchWorldcraft(term) {
       });
       printResultItem(index, item.title, item.snippet);
     });
+    await printQueue;
   } catch (err) {
-    printError("Erro ao buscar na Worldcraft: " + err.message);
+    await printError("Erro ao buscar no repositório da Lógica: " + err.message);
   }
 }
 
@@ -279,27 +329,69 @@ async function openArticle(source, id) {
     const data = await res.json();
 
     if (!data || !data.title) {
-      printError("Artigo não encontrado.");
+      await printError("Artigo não encontrado.");
       return;
     }
 
-    printLine(`=== ${data.title} ===`);
+    currentArticle = {
+      source,
+      id: String(data.id ?? id),
+      title: data.title,
+      content: data.content || "",
+    };
+
+    await printLine(`=== ${data.title} ===`);
     const lines = (data.content || "").split(/\r?\n/);
-    lines.forEach((line) => {
-      printLine(line);
-    });
-    printLine("=== fim do artigo ===");
+    for (const line of lines) {
+      await printLine(line);
+    }
+    await printLine("=== fim ===");
+
+    if (source === "worldcraft") {
+      await printLine('---------------');
+    }
   } catch (err) {
-    printError("Erro ao abrir artigo: " + err.message);
+    await printError("Erro ao abrir artigo: " + err.message);
   }
 }
 
-function printHelp() {
-  printLine("Comandos disponíveis:");
-  printLine('  search <termo>           -> busca em Wikipedia e Worldcraft');
-  printLine('  open <id> ou open #<n>   -> abre artigo da última busca');
-  printLine('  clear / cls  -> limpa a tela');
-  printLine('  help / ?     -> mostra esta ajuda');
+async function askWorldcraftAI(question, article) {
+  await printLine("Consultando IA...");
+  try {
+    const res = await fetch("/api/ai/worldcraft", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        question,
+        context: `Título: ${article.title}\n\nConteúdo:\n${article.content}`.slice(
+          0,
+          12000
+        ),
+      }),
+    });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const text = (data && data.text) || "";
+    if (!text.trim()) {
+      await printError("A IA não retornou texto.");
+      return;
+    }
+    const lines = String(text).split(/\r?\n/);
+    for (const line of lines) {
+      await printLine(line);
+    }
+  } catch (err) {
+    await printError("Falha ao consultar a Lógica: " + err.message);
+  }
+}
+
+async function printHelp() {
+  await printLine("Comandos disponíveis:");
+  await printLine('  search <termo>           -> busca no repositório da Lógica');
+  await printLine('  open <id> ou open #<n>   -> abre informação da última busca');
+  await printLine('  ask <pergunta>           -> Lógica (somente no repositório da Lógica, requer open)');
+  await printLine('  clear / cls  -> limpa a tela');
+  await printLine('  help / ?     -> mostra esta ajuda');
 }
 
 // Foco inicial no input
