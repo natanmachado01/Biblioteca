@@ -1,58 +1,166 @@
 [
   {
-    "id": "wc-1",
-    "title": "Rogério Fontes",
-      "summary": "Atual dono do antiquário Fontes e Filhos, homem sozinho e sem filhos. Um zelote do passado, um mero fantasma.",
-      "content": "Homem adulto de 45 anos, possui cabelos castanhos com as raízes grisalhas por conta do estresse. Sempre está com um sorriso no rosto, mas o olhar deixa trespassar o sentimento de solidão e cansaço. Não tem nenhum tipo de relação com ninguém, apenas com o próprio passado. ",
-    "tags": ["Competidor"]
+    "id": "4a296cb4-8bee-431a-9231-41e21d034440",
+    "title": "Arthur D'avilla",
+    "summary": "Not a good man but a perfect soldier\n\n...",
+    "content": "===================================\n[ DADOS DO REGISTRO ]\n- AGE: 46\n- STATUS: Vivo\n- OCCUPATION: Comandante do Exército\n===================================\n\nNot a good man but a perfect soldier",
+    "categoria": "Personagem",
+    "tags": [
+      "Competidor"
+    ],
+    "source": "worldcraft"
   },
   {
-    "id": "wc-2",
-    "title": "Charles Barbosa",
-    "summary": "Folclorista, viúvo e pai de uma filha a qual ele não lembra mais o nome.",
-    "content": "Homem adulto que parece estar na casa dos 60 anos, antes se portava como um velho louco com memórias fragmentadas. Porém, após aceitar o acordo de Francisca, reconquistou seu passado e retornou ao patamar de competidor do Festival de Temperança.",
-    "tags": ["Eco", "Competidor" ]
+    "id": "c624955e-503d-49fa-b798-387561b7e87b",
+    "title": "Charles",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Personagem",
+    "tags": [
+      "Eco"
+    ],
+    "source": "worldcraft"
   },
   {
-    "id": "wc-x",
-    "title": "Placeholder",
-      "summary": "Placeholder",
-      "content": "Placeholder",
-    "tags": ["Placeholder"]
+    "id": "4f6f65cf-2982-4d6c-a8f7-b1dacdc4d88b",
+    "title": "Clara Melo",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Personagem",
+    "tags": [
+      "Competidor"
+    ],
+    "source": "worldcraft"
   },
   {
-    "id": "wc-x",
-    "title": "Placeholder",
-      "summary": "Placeholder",
-      "content": "Placeholder",
-    "tags": ["Placeholder"]
+    "id": "4799a999-555f-46e1-acc6-5be8e91177d8",
+    "title": "Cora Campos",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Personagem",
+    "tags": [
+      "Eco"
+    ],
+    "source": "worldcraft"
   },
   {
-    "id": "wc-x",
-    "title": "Placeholder",
-      "summary": "Placeholder",
-      "content": "Placeholder",
-    "tags": ["Placeholder"]
+    "id": "0f301fef-c7dd-457f-9707-4b6953582a42",
+    "title": "Daniel",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Personagem",
+    "tags": [
+      "Competidor"
+    ],
+    "source": "worldcraft"
   },
   {
-    "id": "wc-x",
-    "title": "Placeholder",
-      "summary": "Placeholder",
-      "content": "Placeholder",
-    "tags": ["Placeholder"]
+    "id": "625a80f9-d15e-41df-b01e-7f4dde14914e",
+    "title": "Emir",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Personagem",
+    "tags": [
+      "Competidor"
+    ],
+    "source": "worldcraft"
   },
   {
-    "id": "wc-x",
-    "title": "Placeholder",
-      "summary": "Placeholder",
-      "content": "Placeholder",
-    "tags": ["Placeholder"]
+    "id": "4a224f50-ea01-4875-aa3b-6d7ca4dcd812",
+    "title": "Francisca",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Personagem",
+    "tags": [
+      "Culto do Abismo"
+    ],
+    "source": "worldcraft"
   },
   {
-    "id": "wc-x",
-    "title": "Placeholder",
-      "summary": "Placeholder",
-      "content": "Placeholder",
-    "tags": ["Placeholder"]
+    "id": "88518c07-565c-4b11-aaf6-40d13b35dc9e",
+    "title": "Helena",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Personagem",
+    "tags": [
+      "Competidor"
+    ],
+    "source": "worldcraft"
+  },
+  {
+    "id": "8628f1f5-1789-4ccf-a09b-bedadc2e7885",
+    "title": "Yuno",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Personagem",
+    "tags": [
+      "Competidor"
+    ],
+    "source": "worldcraft"
+  },
+  {
+    "id": "aebe6fb3-4f5d-4815-afb7-83083fdd27ec",
+    "title": "A Biblioteca",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Local",
+    "tags": [
+      "Subterrâneo"
+    ],
+    "source": "worldcraft"
+  },
+  {
+    "id": "46f31380-0f27-4624-bb83-067f18611a8f",
+    "title": "Os Mercadores",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Organização",
+    "tags": [],
+    "source": "worldcraft"
+  },
+  {
+    "id": "27e69d1b-b6a3-4d4d-91bc-1555495737aa",
+    "title": "Caderno perdido do Charles",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Item",
+    "tags": [],
+    "source": "worldcraft"
+  },
+  {
+    "id": "033c6716-a434-42a8-901b-b87ecb3c6f1f",
+    "title": "Alma",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Conceito",
+    "tags": [],
+    "source": "worldcraft"
+  },
+  {
+    "id": "f6f204c0-caa3-4718-8451-1fb7357928a5",
+    "title": "Festival de Temperança",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Evento",
+    "tags": [],
+    "source": "worldcraft"
+  },
+  {
+    "id": "64bb9d10-1511-4715-a0b4-c8644652ac92",
+    "title": "Longinus",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Divindade",
+    "tags": [],
+    "source": "worldcraft"
+  },
+  {
+    "id": "0e5cc2ee-8e48-40e2-8248-41067a125bbf",
+    "title": "Residente Ameaçador",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Criatura",
+    "tags": [],
+    "source": "worldcraft"
   }
 ]
