@@ -9,6 +9,8 @@ const TYPE_DELAY_FAST_MS = 0;
 
 // Fila para garantir que as linhas sejam impressas em ordem (digitadas)
 let printQueue = Promise.resolve();
+let isTyping = false;   // Indica se o sistema está animando um texto no momento
+let skipTyping = false; // Flag para forçar a exibição imediata do texto
 
 // Mantém em memória os últimos resultados de busca para permitir "open" por índice
 let lastResults = {
@@ -27,6 +29,8 @@ let historyIndex = -1; // -1 significa "linha atual" (sem histórico carregado)
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+  skipTyping = false; // Reseta a flag para o novo comando ter animação
+
   const raw = input.value.trim();
   if (!raw) return;
 
@@ -75,6 +79,14 @@ input.addEventListener("keydown", (e) => {
       input.value = "";
     }
     input.setSelectionRange(input.value.length, input.value.length);
+  }
+});
+
+document.addEventListener("keydown", (e) => {
+  // Se a tecla for Enter e a animação estiver rodando...
+  if (e.key === "Enter" && isTyping) {
+    e.preventDefault(); // Evita que o form de pesquisa seja enviado
+    skipTyping = true;  // Aciona o modo de exibição instantânea
   }
 });
 
@@ -214,12 +226,23 @@ function sleep(ms) {
 }
 
 async function typeText(el, text, delayMs = TYPE_DELAY_MS) {
+  isTyping = true; // Informa ao sistema que a animação começou
+  
   const s = String(text ?? "");
   for (let i = 0; i < s.length; i++) {
+    // Se o usuário apertou Enter (skipTyping virou true), joga todo o resto do texto na tela
+    if (skipTyping) {
+      el.textContent += s.slice(i);
+      break; // Encerra o loop instantaneamente
+    }
+    
     el.textContent += s[i];
     if (delayMs > 0) await sleep(delayMs);
   }
+  
+  isTyping = false; // Informa que terminou de digitar a linha
 }
+// --------------------------------------------
 
 function printLine(text, cssClass) {
   return enqueuePrint(async () => {
