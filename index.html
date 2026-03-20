@@ -2,11 +2,64 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>WikiTerminal</title>
+  <title>Base de Dados - Temperança</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="terminal">
+
+  <div id="login-screen" class="terminal">
+    <div class="terminal-header">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+      <span class="title">Acesso Restrito - Temperança</span>
+    </div>
+
+    <div class="terminal-body">
+      <div class="output">
+        <div class="line">
+          <span>SISTEMA DE ARQUIVOS CONFIDENCIAIS</span>
+        </div>
+        <div class="line">
+          <span>Por favor, identifique-se.</span>
+        </div>
+        <br>
+      </div>
+
+      <form id="login-form">
+        <div class="input-line">
+          <span class="prompt">Login:</span>
+          <input 
+            id="login-user" 
+            type="text" 
+            autocomplete="off" 
+            required 
+          />
+        </div>
+        
+        <div class="input-line">
+          <span class="prompt">Password:</span>
+          <input 
+            id="login-pass" 
+            type="password" 
+            required 
+          />
+        </div>
+
+        <div class="line">
+          <button type="submit" style="margin-top: 15px; cursor: pointer; background: transparent; color: inherit; border: 1px solid currentColor; padding: 5px 10px; font-family: inherit;">
+            [ INICIAR AUTENTICAÇÃO ]
+          </button>
+        </div>
+
+        <div id="login-error" class="line hidden" style="margin-top: 10px; color: red;">
+          <span>[ERRO] Acesso Negado. Credenciais inválidas.</span>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="terminal-screen" class="terminal hidden">
     <div class="terminal-header">
       <span class="dot red"></span>
       <span class="dot yellow"></span>
@@ -16,23 +69,15 @@
 
     <div class="terminal-body">
       <div class="output" id="output">
-        <div class="line">
-          <span class="prompt">C:\></span>
-          <span>Bem-vindo ao WikiTerminal.</span>
         </div>
-        <div class="line">
-          <span class="prompt">C:\></span>
-          <span>Digite "help" para ver os comandos disponíveis.</span>
-        </div>
-      </div>
 
       <form id="search-form" class="input-line">
-        <span class="prompt">C:\></span>
+        <span class="prompt" id="terminal-prompt">C:\></span>
         <input
           id="search-input"
           type="text"
           autocomplete="off"
-          placeholder="search &lt;termo&gt;"
+          placeholder="search <termo>"
         />
         <button type="submit" class="hidden-button">Comando</button>
       </form>

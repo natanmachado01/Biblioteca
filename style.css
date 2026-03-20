@@ -1,125 +1,199 @@
+/* Importando uma fonte retro pixelada clássica */
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 * {
-    box-sizing: border-box;
-  }
-  
-  body {
-    margin: 0;
-    padding: 0;
-    background: #000;
-    color: #00ff6a;
-    font-family: "Consolas", "Courier New", monospace;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #000;
+  color: #00ff6a;
+  /* Aplicando a fonte retro com fallback para monospace */
+  font-family: 'VT323', "Courier New", monospace;
+  font-size: 22px; /* Fonte ligeiramente maior por ser pixelada */
   height: 100vh;
-    display: flex;
+  display: flex;
   align-items: center;
-    justify-content: center;
-  }
-  
-  .terminal {
-    margin: 16px;
-    border-radius: 6px;
+  justify-content: center;
+  /* Brilho de tela CRT (Phosphor glow) */
+  text-shadow: 0 0 5px rgba(0, 255, 106, 0.5);
+}
+
+/* Efeito de linhas de scan (Scanlines) de monitores CRT antigos */
+body::after {
+  content: " ";
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  z-index: 999;
+  background-size: 100% 4px;
+  pointer-events: none; /* Garante que você ainda consiga clicar nas coisas por baixo */
+}
+
+/* Classe essencial para o script.js alternar as telas */
+.hidden {
+  display: none !important;
+}
+
+.terminal {
+  margin: 16px;
+  border-radius: 6px;
   overflow: hidden;
-    border: 1px solid #00aa55;
-    background: #000;
-    width: 100%;
-    max-width: 960px;
+  border: 1px solid #00aa55;
+  background: #050505;
+  width: 100%;
+  max-width: 960px;
   max-height: 96vh;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .terminal-header {
-    display: flex;
-    align-items: center;
-    padding: 6px 10px;
-    background: #111;
-    border-bottom: 1px solid #004422;
-  }
-  
-  .dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 6px;
-  }
-  
-  .dot.red {
-    background: #ff5f56;
-  }
-  .dot.yellow {
-    background: #ffbd2e;
-  }
-  .dot.green {
-    background: #27c93f;
-  }
-  
-  .title {
-    margin-left: 8px;
-    color: #00ff6a;
-  }
-  
-  .terminal-body {
-    padding: 8px 10px 10px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  /* Brilho sutil na borda da "janela" */
+  box-shadow: 0 0 15px rgba(0, 170, 85, 0.3);
+  position: relative;
+  z-index: 10;
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  background: #111;
+  border-bottom: 1px solid #004422;
+}
+
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+
+.title {
+  margin-left: 8px;
+  color: #00ff6a;
+  font-size: 18px;
+}
+
+.terminal-body {
+  padding: 12px 16px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   min-height: 0;
-  }
-  
-  .output {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 4px;
+}
+
+.output {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
   min-height: 0;
-  }
-  
-  .line {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    margin-bottom: 2px;
-  }
-  
-  .prompt {
-    color: #00ff6a;
-    margin-right: 6px;
-  }
-  
-  .input-line {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    border-top: 1px solid #004422;
-    padding-top: 6px;
-    margin-top: 4px;
-  }
-  
-  #search-input {
-    flex: 1;
-    background: #000;
-    border: none;
-    outline: none;
-    color: #00ff6a;
-    font-family: inherit;
-    font-size: 14px;
-  }
-  
-  #search-input::placeholder {
-    color: #007744;
-  }
-  
-  .hidden-button {
-    display: none;
-  }
-  
-  .result-title {
-    color: #00ff6a;
-    font-weight: bold;
-  }
-  
-  .result-snippet {
-    color: #00cc55;
-  }
-  
-  .error-message {
-    color: #ff5555;
-  }
+}
+
+/* Estilização da barra de rolagem para combinar com o terminal */
+.output::-webkit-scrollbar {
+  width: 8px;
+}
+.output::-webkit-scrollbar-track {
+  background: #001100; 
+}
+.output::-webkit-scrollbar-thumb {
+  background: #00aa55; 
+}
+
+.line {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin-bottom: 4px;
+}
+
+.prompt {
+  color: #00ff6a;
+  margin-right: 8px;
+}
+
+.input-line {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-top: 1px dashed #004422; /* Linha tracejada retro */
+  padding-top: 10px;
+  margin-top: 8px;
+}
+
+/* Inputs gerais (tanto da busca quanto do login) */
+input[type="text"],
+input[type="password"] {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #00ff6a;
+  font-family: inherit;
+  font-size: inherit;
+  text-shadow: inherit;
+}
+
+#search-input {
+  flex: 1;
+}
+
+/* O placeholder (texto fantasma) com uma cor mais apagada */
+input::placeholder {
+  color: #005522;
+}
+
+/* Estilo para os inputs específicos da tela de login */
+#login-user, #login-pass {
+  border-bottom: 1px solid #007744;
+  width: 250px;
+  padding: 2px 5px;
+}
+
+#login-pass {
+  letter-spacing: 3px; /* Espaça os asteriscos da senha */
+}
+
+/* Botão de autenticação retro */
+#login-form button {
+  transition: all 0.2s;
+}
+
+#login-form button:hover, #login-form button:focus {
+  background: #00ff6a !important;
+  color: #000 !important;
+  outline: none;
+  box-shadow: 0 0 10px #00ff6a;
+}
+
+.hidden-button {
+  display: none;
+}
+
+.result-title {
+  color: #00ff6a;
+  font-weight: bold;
+}
+
+.result-snippet {
+  color: #00cc55;
+}
+
+/* Mensagens de sistema no terminal */
+.error-message {
+  color: #ff3333;
+  text-shadow: 0 0 5px rgba(255, 51, 51, 0.5);
+}
+
+.success-message {
+  color: #00ffff;
+  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+}

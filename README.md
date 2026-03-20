@@ -49,3 +49,4 @@ O frontend chama `POST /api/ai/worldcraft` com:
 
 Observação: não commite seu `.env`.
 
+O COMANDO PARA POPULAR A DATABASE DO WORLDCRAFT É O NODE SCRAPER.JS

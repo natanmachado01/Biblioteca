@@ -9,8 +9,9 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Caminho para o "banco" estático de artigos Worldcraft
+// Caminhos para os "bancos" estáticos
 const WORLCRAFT_DB_PATH = path.join(__dirname, "worldcraft-db.json");
+const USERS_DB_PATH = path.join(__dirname, "users.json");
 
 // Carrega o JSON de artigos Worldcraft em memória
 function loadWorldcraftDB() {
@@ -23,11 +24,58 @@ function loadWorldcraftDB() {
   }
 }
 
+// Carrega o JSON de Usuários (Acesso Restrito) em memória
+function loadUsersDB() {
+  try {
+    const raw = fs.readFileSync(USERS_DB_PATH, "utf8");
+    return JSON.parse(raw);
+  } catch (err) {
+    console.error("Erro ao carregar users.json:", err);
+    // Retorna array vazio caso o arquivo ainda não exista
+    return []; 
+  }
+}
+
 // Middleware estático para servir index.html, script.js, style.css, etc.
 app.use(express.static(__dirname));
 app.use(express.json({ limit: "1mb" }));
 
 // --- Rotas de API ---
+
+// ==========================================
+// ROTA DE AUTENTICAÇÃO (LOGIN)
+// ==========================================
+app.post("/api/login", (req, res) => {
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    return res.status(400).json({ success: false, message: "Usuário e senha são obrigatórios." });
+  }
+
+  const users = loadUsersDB();
+  
+  // Procura uma credencial exata
+  const foundUser = users.find(u => u.username === username && u.password === password);
+
+  if (foundUser) {
+    // Retorna os dados, ocultando a senha por segurança
+    res.json({
+      success: true,
+      user: {
+        username: foundUser.username,
+        role: foundUser.role,
+        name: foundUser.name
+      }
+    });
+  } else {
+    // Se não encontrou, acesso negado
+    res.status(401).json({ success: false, message: "Credenciais inválidas." });
+  }
+});
+
+// ==========================================
+// ROTAS DO TERMINAL
+// ==========================================
 
 // Busca na Wikipedia (proxy simples)
 app.get("/api/search/wikipedia", async (req, res) => {
@@ -170,12 +218,12 @@ app.post("/api/ai/worldcraft", async (req, res) => {
 
     const prompt = [
       "Você é um assistente dentro de um terminal. Responda curto e direto.",
-      "Contexto: o usuário está lendo/pesquisando artigos do Worldcraft (uma base local).",
+      "Contexto: o usuário está acessando dados do sistema confidencial de Temperança.",
       "Regras:",
-      "- Não invente fatos. Se faltar contexto, diga que não há informação suficiente no Worldcraft.",
-      "- Se possível, cite trechos do contexto fornecido de forma curta.",
+      "- Não invente fatos. Se faltar contexto, diga que o registro está corrompido ou ausente no banco de dados.",
+      "- Se possível, cite trechos do contexto fornecido de forma curta e pragmática, como uma IA militar.",
       "",
-      "Contexto Worldcraft (pode estar vazio):",
+      "Contexto do Arquivo (pode estar vazio):",
       String(context || "").slice(0, 12000),
       "",
       "Pergunta do usuário:",
@@ -188,11 +236,10 @@ app.post("/api/ai/worldcraft", async (req, res) => {
     res.json({ text });
   } catch (err) {
     console.error("Erro Gemini Worldcraft:", err);
-    res.status(500).json({ error: "Erro ao consultar Gemini." });
+    res.status(500).json({ error: "Erro crítico ao consultar os servidores da Lógica." });
   }
 });
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
-
