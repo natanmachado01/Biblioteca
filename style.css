@@ -9,7 +9,7 @@ body {
   margin: 0;
   padding: 0;
   background: #000;
-  color: #00ff6a;
+  color: #00bb44;
   /* Aplicando a fonte retro com fallback para monospace */
   font-family: 'VT323', "Courier New", monospace;
   font-size: 22px; /* Fonte ligeiramente maior por ser pixelada */
@@ -18,7 +18,7 @@ body {
   align-items: center;
   justify-content: center;
   /* Brilho de tela CRT (Phosphor glow) */
-  text-shadow: 0 0 5px rgba(0, 255, 106, 0.5);
+  text-shadow: 0 0 5px rgba(0, 187, 68, 0.4);
 }
 
 /* Efeito de linhas de scan (Scanlines) de monitores CRT antigos */

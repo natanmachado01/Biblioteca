@@ -4,8 +4,6 @@ const path = require("path");
 
 require("dotenv").config();
 
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -192,52 +190,6 @@ app.get("/api/article/worldcraft/:id", (req, res) => {
     title: article.title,
     content: article.content,
   });
-});
-
-// IA (Gemini) - respostas sobre Worldcraft
-app.post("/api/ai/worldcraft", async (req, res) => {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({
-      error:
-        "GEMINI_API_KEY não configurada. Crie um arquivo .env com GEMINI_API_KEY=<sua_chave>.",
-    });
-  }
-
-  const question = (req.body && req.body.question) || "";
-  const context = (req.body && req.body.context) || "";
-
-  if (!question || typeof question !== "string") {
-    return res.status(400).json({ error: "Campo 'question' é obrigatório." });
-  }
-
-  try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    const modelName = process.env.GEMINI_MODEL || "gemini-1.5-flash";
-    const model = genAI.getGenerativeModel({ model: modelName });
-
-    const prompt = [
-      "Você é um assistente dentro de um terminal. Responda curto e direto.",
-      "Contexto: o usuário está acessando dados do sistema confidencial de Temperança.",
-      "Regras:",
-      "- Não invente fatos. Se faltar contexto, diga que o registro está corrompido ou ausente no banco de dados.",
-      "- Se possível, cite trechos do contexto fornecido de forma curta e pragmática, como uma IA militar.",
-      "",
-      "Contexto do Arquivo (pode estar vazio):",
-      String(context || "").slice(0, 12000),
-      "",
-      "Pergunta do usuário:",
-      question,
-    ].join("\n");
-
-    const result = await model.generateContent(prompt);
-    const text = result?.response?.text?.() || "";
-
-    res.json({ text });
-  } catch (err) {
-    console.error("Erro Gemini Worldcraft:", err);
-    res.status(500).json({ error: "Erro crítico ao consultar os servidores da Lógica." });
-  }
 });
 
 app.listen(PORT, () => {

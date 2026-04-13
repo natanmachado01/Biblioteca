@@ -228,22 +228,6 @@ async function handleCommand(raw) {
     return;
   }
 
-  if (cmd === "ask") {
-    const question = parts.slice(1).join(" ");
-    if (!question) {
-      await printError('Uso: ask <pergunta> (somente Worldcraft)');
-      return;
-    }
-
-    if (!currentArticle || currentArticle.source !== "worldcraft") {
-      await printError('Abra um artigo do Worldcraft primeiro (ex.: search <termo> e open #n).');
-      return;
-    }
-
-    await askWorldcraftAI(question, currentArticle);
-    return;
-  }
-
   if (cmd === "clear" || cmd === "cls") {
     output.innerHTML = "";
     return;
@@ -427,38 +411,8 @@ async function openArticle(source, id) {
     }
     await printLine("=== fim ===");
 
-    if (source === "worldcraft") {
-      await printLine('---------------');
-    }
   } catch (err) {
     await printError("Erro ao abrir artigo: " + err.message);
-  }
-}
-
-async function askWorldcraftAI(question, article) {
-  await printLine("Consultando IA...");
-  try {
-    const res = await fetch("/api/ai/worldcraft", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        question,
-        context: `Título: ${article.title}\n\nConteúdo:\n${article.content}`.slice(0, 12000),
-      }),
-    });
-    if (!res.ok) throw new Error("HTTP " + res.status);
-    const data = await res.json();
-    const text = (data && data.text) || "";
-    if (!text.trim()) {
-      await printError("A IA não retornou texto.");
-      return;
-    }
-    const lines = String(text).split(/\r?\n/);
-    for (const line of lines) {
-      await printLine(line);
-    }
-  } catch (err) {
-    await printError("Falha ao consultar a Lógica: " + err.message);
   }
 }
 
@@ -466,7 +420,6 @@ async function printHelp() {
   await printLine("Comandos disponíveis:");
   await printLine('  search <termo>           -> busca nos registros');
   await printLine('  open <id> ou open #<n>   -> abre informação da última busca');
-  await printLine('  ask <pergunta>           -> Consulta a Lógica (requer open)');
   await printLine('  clear / cls              -> limpa a tela');
   await printLine('  help / ?                 -> mostra esta ajuda');
 }
