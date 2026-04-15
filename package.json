@@ -2,9 +2,9 @@
   "name": "Terminal - Lógica",
   "version": "1.0.0",
   "description": "Terminal-like interface to search and read Wikipedia and Worldcraft articles via localhost.",
-  "main": "server.js",
+  "main": "backend/server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node backend/server.js"
   },
   "dependencies": {
     "axios": "^1.13.6",

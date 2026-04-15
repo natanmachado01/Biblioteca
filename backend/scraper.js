@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
 const fs = require('fs');
+const path = require('path');
 
 const INDEX_URL = 'https://worldcraft.com.br/share/b240c700-408e-4849-a442-2e46e7dd6937';
 
@@ -115,7 +116,7 @@ async function updateWorldcraftDatabase() {
         }
 
         // Salva tudo no JSON!
-        fs.writeFileSync('./worldcraft-db.json', JSON.stringify(databaseCompleta, null, 2));
+        fs.writeFileSync(path.join(__dirname, 'worldcraft-db.json'), JSON.stringify(databaseCompleta, null, 2));
         console.log("\n[SUCESSO] O arquivo worldcraft-db.json foi populado!");
 
     } catch (error) {

@@ -35,7 +35,7 @@ function loadUsersDB() {
 }
 
 // Middleware estático para servir index.html, script.js, style.css, etc.
-app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, "../frontend")));
 app.use(express.json({ limit: "1mb" }));
 
 // --- Rotas de API ---
