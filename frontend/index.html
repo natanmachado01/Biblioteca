@@ -2,85 +2,204 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Base de Dados - Temperança</title>
+  <title>Temperança — Sistema de Arquivos</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <div id="login-screen" class="terminal">
-    <div class="terminal-header">
-      <span class="dot red"></span>
-      <span class="dot yellow"></span>
-      <span class="dot green"></span>
-      <span class="title">Acesso Restrito - Temperança</span>
-    </div>
-
-    <div class="terminal-body">
-      <div class="output">
-        <div class="line">
-          <span>SISTEMA DE ARQUIVOS CONFIDENCIAIS</span>
-        </div>
-        <div class="line">
-          <span>Por favor, identifique-se.</span>
-        </div>
-        <br>
+  <!-- ============================================== -->
+  <!-- TELA 1: LOGIN                                  -->
+  <!-- ============================================== -->
+  <div id="screen-login" class="screen screen-center">
+    <div class="win">
+      <div class="win-header">
+        <span class="win-dots">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </span>
+        <span class="win-title">ACESSO RESTRITO — SISTEMA TEMPERANÇA</span>
       </div>
+      <div class="win-body">
+        <div class="login-banner">
+          <div class="dim">╔══════════════════════════════════════════════╗</div>
+          <div class="dim">║   SISTEMA DE ARQUIVOS CONFIDENCIAIS         ║</div>
+          <div class="dim">║          OPERAÇÃO TEMPERANÇA  v2.1          ║</div>
+          <div class="dim">╚══════════════════════════════════════════════╝</div>
+        </div>
+        <div class="spacer"></div>
+        <div class="line">Identificação requerida para acesso ao sistema.</div>
+        <div class="spacer"></div>
 
-      <form id="login-form">
-        <div class="input-line">
-          <span class="prompt">Login:</span>
-          <input 
-            id="login-user" 
-            type="text" 
-            autocomplete="off" 
-            required 
-          />
-        </div>
-        
-        <div class="input-line">
-          <span class="prompt">Password:</span>
-          <input 
-            id="login-pass" 
-            type="password" 
-            required 
-          />
-        </div>
-
-        <div class="line">
-          <button type="submit" style="margin-top: 15px; cursor: pointer; background: transparent; color: inherit; border: 1px solid currentColor; padding: 5px 10px; font-family: inherit;">
-            [ INICIAR AUTENTICAÇÃO ]
-          </button>
-        </div>
-
-        <div id="login-error" class="line hidden" style="margin-top: 10px; color: red;">
-          <span>[ERRO] Acesso Negado. Credenciais inválidas.</span>
-        </div>
-      </form>
+        <form id="login-form">
+          <div class="input-line">
+            <span class="prompt">USUÁRIO :</span>
+            <input id="login-user" type="text" autocomplete="off" required />
+          </div>
+          <div class="input-line">
+            <span class="prompt">SENHA   :</span>
+            <input id="login-pass" type="password" required />
+          </div>
+          <div class="spacer"></div>
+          <div class="line">
+            <button type="submit" class="btn-retro">[ AUTENTICAR ]</button>
+          </div>
+          <div id="login-error" class="line error hidden">
+            <span>[ERRO] Acesso negado. Credenciais inválidas.</span>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
-  <div id="terminal-screen" class="terminal hidden">
-    <div class="terminal-header">
-      <span class="dot red"></span>
-      <span class="dot yellow"></span>
-      <span class="dot green"></span>
-      <span class="title">C:\> Terminal L</span>
+  <!-- ============================================== -->
+  <!-- TELA 2: DESKTOP / MENU PRINCIPAL               -->
+  <!-- ============================================== -->
+  <div id="screen-desktop" class="screen hidden">
+    <div class="os-bar top">
+      <span class="os-title">SISTEMA TEMPERANÇA  v2.1</span>
+      <span class="os-user" id="desk-user"></span>
+      <span class="os-clock" id="clock-desk"></span>
     </div>
 
-    <div class="terminal-body">
-      <div class="output" id="output">
+    <div class="os-main">
+      <div class="desk-greeting">
+        <div class="dim">══════════════════════════════════════════════════════════════</div>
+        <div id="desk-welcome" class="bright">  BEM-VINDO(A) AO SISTEMA TEMPERANÇA</div>
+        <div class="dim">══════════════════════════════════════════════════════════════</div>
+      </div>
+
+      <div class="desk-label">SELECIONE UM MÓDULO:</div>
+
+      <div class="program-grid">
+
+        <div class="program-tile" onclick="openProgram('terminal')">
+          <div class="tile-art">
+            <div class="dim">┌─────────────────────┐</div>
+            <div class="dim">│                     │</div>
+            <div class="bright">│   &gt;&gt;  TERMINAL  &lt;&lt;  │</div>
+            <div class="dim">│                     │</div>
+            <div class="dim">│   C:\&gt; _            │</div>
+            <div class="dim">└─────────────────────┘</div>
+          </div>
+          <div class="tile-name">TERMINAL.EXE</div>
+          <div class="tile-desc">Interface de linha de comando</div>
         </div>
 
-      <form id="search-form" class="input-line">
-        <span class="prompt" id="terminal-prompt">C:\></span>
+        <div class="program-tile" onclick="openProgram('database')">
+          <div class="tile-art">
+            <div class="dim">┌─────────────────────┐</div>
+            <div class="dim">│                     │</div>
+            <div class="bright">│   &gt;&gt;  DATABASE  &lt;&lt;  │</div>
+            <div class="dim">│                     │</div>
+            <div class="dim">│  ▓ REGISTROS ▓▓▓▓▓  │</div>
+            <div class="dim">└─────────────────────┘</div>
+          </div>
+          <div class="tile-name">DATABASE.EXE</div>
+          <div class="tile-desc">Registros e documentos confidenciais</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="os-bar bottom">
+      <span class="status-dot">●</span>
+      <span id="desk-status">STATUS: ONLINE</span>
+      <span class="sep">│</span>
+      <span>CONEXÃO: ESTÁVEL</span>
+      <span class="sep">│</span>
+      <span id="desk-filecount">REGISTROS: —</span>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- TELA 3: PROGRAMA — TERMINAL                    -->
+  <!-- ============================================== -->
+  <div id="screen-terminal" class="screen hidden">
+    <div class="os-bar top">
+      <span class="os-title bright">TERMINAL.EXE</span>
+      <span class="os-clock" id="clock-term"></span>
+    </div>
+
+    <div class="prog-body">
+      <div class="output" id="output"></div>
+
+      <form id="search-form" class="term-input-line">
+        <span class="prompt" id="terminal-prompt">sistema@temperança&gt;</span>
         <input
           id="search-input"
           type="text"
           autocomplete="off"
-          placeholder="search <termo>"
+          placeholder="digite um comando..."
         />
-        <button type="submit" class="hidden-button">Comando</button>
+        <button type="submit" class="hidden-btn">Cmd</button>
       </form>
+    </div>
+
+    <div class="os-bar bottom">
+      <button class="btn-retro-sm" onclick="closeProgram()">[&lt;&lt; MENU]</button>
+      <span class="dim">Use 'help' para ver os comandos disponíveis</span>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- TELA 4: PROGRAMA — DATABASE (lista)            -->
+  <!-- ============================================== -->
+  <div id="screen-database" class="screen hidden">
+    <div class="os-bar top">
+      <span class="os-title bright">DATABASE.EXE</span>
+      <span class="os-subtitle dim">— REGISTROS CONFIDENCIAIS</span>
+      <span class="os-clock" id="clock-db"></span>
+    </div>
+
+    <div class="prog-body db-body">
+      <div class="db-toolbar">
+        <span class="dim">BUSCAR:</span>
+        <input id="db-search" type="text" autocomplete="off" placeholder="filtrar por título, categoria ou tag..." />
+        <span class="dim" id="db-count">— registros</span>
+      </div>
+
+      <div class="db-table-wrap">
+        <table class="db-table">
+          <thead>
+            <tr>
+              <th class="col-cat">CATEGORIA</th>
+              <th class="col-title">TÍTULO DO REGISTRO</th>
+              <th class="col-tags">TAGS</th>
+            </tr>
+          </thead>
+          <tbody id="db-tbody">
+            <tr><td colspan="3" class="dim loading-cell">Carregando registros...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="os-bar bottom">
+      <button class="btn-retro-sm" onclick="closeProgram()">[&lt;&lt; MENU]</button>
+      <span class="dim">Clique em um registro para abrir  │  ESC para voltar ao menu</span>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- TELA 5: PROGRAMA — DATABASE (detalhe)          -->
+  <!-- ============================================== -->
+  <div id="screen-db-detail" class="screen hidden">
+    <div class="os-bar top">
+      <span class="os-title bright" id="detail-prog-title">DATABASE.EXE</span>
+      <span class="os-clock" id="clock-detail"></span>
+    </div>
+
+    <div class="prog-body">
+      <div class="db-meta" id="detail-meta"></div>
+      <div class="db-sep">────────────────────────────────────────────────────────────</div>
+      <div class="output" id="detail-content"></div>
+    </div>
+
+    <div class="os-bar bottom">
+      <button class="btn-retro-sm" onclick="showScreen('screen-database')">[&lt;&lt; LISTA]</button>
+      <button class="btn-retro-sm" onclick="closeProgram()">[MENU PRINCIPAL]</button>
+      <span class="dim">ESC para voltar à lista</span>
     </div>
   </div>
 

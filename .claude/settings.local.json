@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"require\\('./backend/server.js'\\)\")",
+      "Bash(curl -s http://localhost:3000/api/worldcraft/all)",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const j=JSON.parse\\(d\\); console.log\\('Records count:', j.records?.length, '| Sample:', j.records?.[0]?.title\\)\")",
+      "Bash(node -e \"process.stdin.resume\\(\\); let d=''; process.stdin.on\\('data',c=>d+=c\\); process.stdin.on\\('end',\\(\\)=>{ try{ const j=JSON.parse\\(d\\); console.log\\('OK - Registros:', j.records?.length, '| Primeiro:', j.records?.[0]?.title\\); }catch\\(e\\){ console.log\\('RAW:', d.slice\\(0,200\\)\\); }}\\)\")",
+      "Bash(curl -s http://localhost:3000/)"
+    ]
+  }
+}

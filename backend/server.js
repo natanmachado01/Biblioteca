@@ -192,6 +192,20 @@ app.get("/api/article/worldcraft/:id", (req, res) => {
   });
 });
 
+// Lista todos os registros sem filtro (para o DATABASE.EXE)
+app.get("/api/worldcraft/all", (req, res) => {
+  const db = loadWorldcraftDB();
+  res.json({
+    records: db.map((item) => ({
+      id:        item.id,
+      title:     item.title,
+      categoria: item.categoria || "—",
+      tags:      item.tags || [],
+      summary:   item.summary || "",
+    })),
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });

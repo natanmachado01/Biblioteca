@@ -1,199 +1,463 @@
-/* Importando uma fonte retro pixelada clássica */
+/* =====================================================
+   SISTEMA TEMPERANÇA v2.1 — Interface Retro BBS
+   Estética: Terminal Militar / BBS Anos 80-90
+   ===================================================== */
+
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
-* {
-  box-sizing: border-box;
+:root {
+  --bg:          #000;
+  --bg-header:   #030d03;
+  --bg-panel:    #020802;
+  --bg-hover:    #001a00;
+  --bg-selected: #002800;
+  --text:        #00cc44;
+  --text-bright: #00ff6a;
+  --text-dim:    #005c22;
+  --text-cyan:   #00ffcc;
+  --border:      #004d1a;
+  --border-hi:   #00aa33;
+  --error:       #ff3333;
+  --warning:     #ffaa00;
+  --glow:        rgba(0, 204, 68, 0.35);
+  --glow-bright: rgba(0, 255, 106, 0.55);
+  --glow-err:    rgba(255, 51, 51, 0.45);
 }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
 
 body {
-  margin: 0;
-  padding: 0;
-  background: #000;
-  color: #00bb44;
-  /* Aplicando a fonte retro com fallback para monospace */
-  font-family: 'VT323', "Courier New", monospace;
-  font-size: 22px; /* Fonte ligeiramente maior por ser pixelada */
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* Brilho de tela CRT (Phosphor glow) */
-  text-shadow: 0 0 5px rgba(0, 187, 68, 0.4);
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: 20px;
+  line-height: 1.45;
+  text-shadow: 0 0 5px var(--glow);
 }
 
-/* Efeito de linhas de scan (Scanlines) de monitores CRT antigos */
+/* ── Efeito CRT: Scanlines ── */
 body::after {
-  content: " ";
+  content: "";
   display: block;
   position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-  z-index: 999;
+  inset: 0;
+  background: linear-gradient(
+    rgba(0,0,0,0) 50%,
+    rgba(0,0,0,0.20) 50%
+  );
   background-size: 100% 4px;
-  pointer-events: none; /* Garante que você ainda consiga clicar nas coisas por baixo */
+  pointer-events: none;
+  z-index: 9999;
 }
 
-/* Classe essencial para o script.js alternar as telas */
-.hidden {
-  display: none !important;
+/* ── Efeito CRT: Vinheta nas bordas ── */
+body::before {
+  content: "";
+  display: block;
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.45) 100%);
+  pointer-events: none;
+  z-index: 9998;
 }
 
-.terminal {
-  margin: 16px;
-  border-radius: 6px;
-  overflow: hidden;
-  border: 1px solid #00aa55;
-  background: #050505;
-  width: 100%;
-  max-width: 960px;
-  max-height: 96vh;
+/* =====================================================
+   UTILITÁRIOS
+   ===================================================== */
+
+.hidden  { display: none !important; }
+.dim     { color: var(--text-dim); }
+.bright  { color: var(--text-bright); text-shadow: 0 0 8px var(--glow-bright); }
+.error   { color: var(--error);   text-shadow: 0 0 5px var(--glow-err); }
+.warning { color: var(--warning); }
+.line    { white-space: pre-wrap; word-wrap: break-word; }
+.spacer  { height: 12px; }
+.sep     { color: var(--border-hi); }
+
+/* =====================================================
+   SCREENS — layout base
+   ===================================================== */
+
+.screen {
+  position: fixed;
+  inset: 0;
   display: flex;
   flex-direction: column;
-  /* Brilho sutil na borda da "janela" */
-  box-shadow: 0 0 15px rgba(0, 170, 85, 0.3);
-  position: relative;
-  z-index: 10;
+  background: var(--bg);
 }
 
-.terminal-header {
+.screen-center {
+  align-items: center;
+  justify-content: center;
+}
+
+/* =====================================================
+   OS BARS (topo e rodapé de cada programa)
+   ===================================================== */
+
+.os-bar {
   display: flex;
   align-items: center;
-  padding: 6px 10px;
-  background: #111;
-  border-bottom: 1px solid #004422;
-}
-
-.dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  margin-right: 6px;
-}
-
-.dot.red { background: #ff5f56; }
-.dot.yellow { background: #ffbd2e; }
-.dot.green { background: #27c93f; }
-
-.title {
-  margin-left: 8px;
-  color: #00ff6a;
+  gap: 14px;
+  padding: 5px 16px;
+  background: var(--bg-header);
   font-size: 18px;
+  flex-shrink: 0;
 }
 
-.terminal-body {
-  padding: 12px 16px 16px;
-  flex: 1;
+.os-bar.top    { border-bottom: 1px solid var(--border-hi); }
+.os-bar.bottom { border-top:    1px solid var(--border-hi); }
+
+.os-title    { color: var(--text-bright); text-shadow: 0 0 8px var(--glow-bright); }
+.os-subtitle { font-size: 16px; }
+.os-user     { color: var(--text-dim); flex: 1; text-align: center; font-size: 16px; }
+.os-clock    { color: var(--text-dim); font-size: 16px; margin-left: auto; }
+
+.status-dot  { color: var(--text-bright); font-size: 14px; }
+
+/* =====================================================
+   TELA DE LOGIN
+   ===================================================== */
+
+.win {
+  border: 1px solid var(--border-hi);
+  background: var(--bg-panel);
+  width: 100%;
+  max-width: 580px;
+  box-shadow: 0 0 25px rgba(0, 170, 51, 0.2);
+}
+
+.win-header {
   display: flex;
-  flex-direction: column;
-  min-height: 0;
+  align-items: center;
+  padding: 5px 12px;
+  background: var(--bg-header);
+  border-bottom: 1px solid var(--border);
 }
 
-.output {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 4px;
-  min-height: 0;
+.win-dots { display: flex; gap: 6px; margin-right: 10px; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+.dot.red    { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green  { background: #27c93f; }
+
+.win-title {
+  color: var(--text-bright);
+  font-size: 17px;
+  text-shadow: 0 0 6px var(--glow-bright);
 }
 
-/* Estilização da barra de rolagem para combinar com o terminal */
-.output::-webkit-scrollbar {
-  width: 8px;
-}
-.output::-webkit-scrollbar-track {
-  background: #001100; 
-}
-.output::-webkit-scrollbar-thumb {
-  background: #00aa55; 
+.win-body {
+  padding: 20px 24px 26px;
 }
 
-.line {
-  white-space: pre-wrap;
-  word-wrap: break-word;
+.login-banner {
   margin-bottom: 4px;
-}
-
-.prompt {
-  color: #00ff6a;
-  margin-right: 8px;
+  font-size: 19px;
+  line-height: 1.5;
 }
 
 .input-line {
   display: flex;
   align-items: center;
-  gap: 4px;
-  border-top: 1px dashed #004422; /* Linha tracejada retro */
-  padding-top: 10px;
-  margin-top: 8px;
+  gap: 10px;
+  margin: 5px 0;
 }
 
-/* Inputs gerais (tanto da busca quanto do login) */
+.prompt {
+  color: var(--text-bright);
+  text-shadow: 0 0 6px var(--glow-bright);
+  white-space: nowrap;
+}
+
 input[type="text"],
 input[type="password"] {
   background: transparent;
   border: none;
+  border-bottom: 1px solid var(--border-hi);
   outline: none;
-  color: #00ff6a;
+  color: var(--text-bright);
   font-family: inherit;
   font-size: inherit;
-  text-shadow: inherit;
+  text-shadow: 0 0 5px var(--glow-bright);
+  padding: 2px 6px;
+  width: 260px;
+}
+
+input[type="password"] { letter-spacing: 4px; }
+input::placeholder     { color: var(--text-dim); letter-spacing: normal; }
+
+/* ── Botões ── */
+.btn-retro {
+  background: transparent;
+  border: 1px solid var(--border-hi);
+  color: var(--text);
+  font-family: inherit;
+  font-size: inherit;
+  padding: 4px 14px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, box-shadow 0.12s;
+}
+
+.btn-retro:hover,
+.btn-retro:focus {
+  background: var(--text-bright);
+  color: #000;
+  text-shadow: none;
+  outline: none;
+  box-shadow: 0 0 14px var(--glow-bright);
+}
+
+.btn-retro-sm {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 17px;
+  padding: 2px 10px;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s;
+}
+
+.btn-retro-sm:hover,
+.btn-retro-sm:focus {
+  border-color: var(--border-hi);
+  color: var(--text);
+  outline: none;
+}
+
+/* =====================================================
+   TELA DESKTOP
+   ===================================================== */
+
+.os-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.desk-greeting {
+  text-align: left;
+  font-size: 19px;
+  line-height: 1.6;
+}
+
+.desk-label {
+  color: var(--text-dim);
+  font-size: 17px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.program-grid {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.program-tile {
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  padding: 18px 26px;
+  cursor: pointer;
+  text-align: center;
+  min-width: 210px;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  user-select: none;
+}
+
+.program-tile:hover {
+  background: var(--bg-hover);
+  border-color: var(--text-bright);
+  box-shadow: 0 0 22px rgba(0, 255, 106, 0.12);
+}
+
+.program-tile:hover .tile-name {
+  color: var(--text-bright);
+  text-shadow: 0 0 8px var(--glow-bright);
+}
+
+.tile-art  { font-size: 17px; line-height: 1.4; margin-bottom: 10px; }
+.tile-name { font-size: 20px; color: var(--text); transition: color 0.15s; margin-bottom: 4px; }
+.tile-desc { font-size: 16px; color: var(--text-dim); }
+
+/* =====================================================
+   CORPO DOS PROGRAMAS (shared)
+   ===================================================== */
+
+.prog-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 10px 14px;
+  gap: 6px;
+}
+
+/* =====================================================
+   TERMINAL
+   ===================================================== */
+
+.output {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
+  min-height: 0;
+}
+
+.output::-webkit-scrollbar       { width: 8px; }
+.output::-webkit-scrollbar-track { background: #001100; }
+.output::-webkit-scrollbar-thumb { background: var(--border-hi); }
+
+.output .line { margin-bottom: 3px; }
+
+.term-input-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px dashed var(--border);
+  padding-top: 8px;
+  flex-shrink: 0;
 }
 
 #search-input {
-  flex: 1;
-}
-
-/* O placeholder (texto fantasma) com uma cor mais apagada */
-input::placeholder {
-  color: #005522;
-}
-
-/* Estilo para os inputs específicos da tela de login */
-#login-user, #login-pass {
-  border-bottom: 1px solid #007744;
-  width: 250px;
-  padding: 2px 5px;
-}
-
-#login-pass {
-  letter-spacing: 3px; /* Espaça os asteriscos da senha */
-}
-
-/* Botão de autenticação retro */
-#login-form button {
-  transition: all 0.2s;
-}
-
-#login-form button:hover, #login-form button:focus {
-  background: #00ff6a !important;
-  color: #000 !important;
+  background: transparent;
+  border: none;
   outline: none;
-  box-shadow: 0 0 10px #00ff6a;
+  color: var(--text-bright);
+  font-family: inherit;
+  font-size: inherit;
+  text-shadow: 0 0 5px var(--glow-bright);
+  flex: 1;
+  width: auto;
 }
 
-.hidden-button {
-  display: none;
+.hidden-btn { display: none; }
+
+.error-message   { color: var(--error);    text-shadow: 0 0 5px var(--glow-err); }
+.success-message { color: var(--text-cyan); text-shadow: 0 0 5px rgba(0,255,204,0.45); }
+
+/* =====================================================
+   DATABASE — lista
+   ===================================================== */
+
+.db-body {
+  padding: 0;
 }
 
-.result-title {
-  color: #00ff6a;
-  font-weight: bold;
+.db-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  font-size: 18px;
 }
 
-.result-snippet {
-  color: #00cc55;
+#db-search {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  outline: none;
+  color: var(--text-bright);
+  font-family: inherit;
+  font-size: 18px;
+  text-shadow: 0 0 5px var(--glow-bright);
+  padding: 2px 6px;
+  width: 340px;
+  letter-spacing: normal;
 }
 
-/* Mensagens de sistema no terminal */
-.error-message {
-  color: #ff3333;
-  text-shadow: 0 0 5px rgba(255, 51, 51, 0.5);
+.db-table-wrap {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
-.success-message {
-  color: #00ffff;
-  text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+.db-table-wrap::-webkit-scrollbar       { width: 8px; }
+.db-table-wrap::-webkit-scrollbar-track { background: #001100; }
+.db-table-wrap::-webkit-scrollbar-thumb { background: var(--border-hi); }
+
+.db-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 19px;
 }
+
+.db-table thead tr {
+  background: var(--bg-header);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.db-table th {
+  padding: 6px 14px;
+  text-align: left;
+  color: var(--text-bright);
+  font-weight: normal;
+  letter-spacing: 1px;
+  text-shadow: 0 0 6px var(--glow-bright);
+  border-bottom: 1px solid var(--border-hi);
+  border-right: 1px solid var(--border);
+}
+
+.db-table th:last-child { border-right: none; }
+
+.db-table td {
+  padding: 5px 14px;
+  border-bottom: 1px solid #001500;
+  border-right: 1px solid #001500;
+  vertical-align: top;
+}
+
+.db-table td:last-child { border-right: none; }
+
+.db-table tbody tr {
+  cursor: pointer;
+  transition: background 0.08s;
+}
+
+.db-table tbody tr:hover {
+  background: var(--bg-hover);
+}
+
+.col-cat   { color: var(--text-dim);    width: 160px; white-space: nowrap; }
+.col-title { color: var(--text);        min-width: 240px; }
+.col-tags  { color: var(--text-dim);    font-size: 17px; }
+
+.loading-cell { padding: 16px 14px; font-size: 18px; }
+
+/* =====================================================
+   DATABASE — detalhe do registro
+   ===================================================== */
+
+.db-meta {
+  padding: 6px 0 8px;
+  border-bottom: 1px dashed var(--border);
+  flex-shrink: 0;
+}
+
+.meta-row    { margin-bottom: 3px; font-size: 19px; }
+.meta-label  { color: var(--text-dim); margin-right: 8px; }
+.meta-value  { color: var(--text-bright); }
+
+.db-sep {
+  color: var(--text-dim);
+  flex-shrink: 0;
+  margin: 4px 0;
+  font-size: 18px;
+  overflow: hidden;
+}
+
+#detail-content::-webkit-scrollbar       { width: 8px; }
+#detail-content::-webkit-scrollbar-track { background: #001100; }
+#detail-content::-webkit-scrollbar-thumb { background: var(--border-hi); }

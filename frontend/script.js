@@ -2,31 +2,47 @@
 // REFERÊNCIAS DA INTERFACE
 // ==========================================
 
-// Elementos da Tela de Login
-const loginScreen = document.getElementById("login-screen");
-const loginForm = document.getElementById("login-form");
-const loginUser = document.getElementById("login-user");
-const loginPass = document.getElementById("login-pass");
+// Screens
+const screenLogin    = document.getElementById("screen-login");
+const screenDesktop  = document.getElementById("screen-desktop");
+const screenTerminal = document.getElementById("screen-terminal");
+const screenDatabase = document.getElementById("screen-database");
+const screenDbDetail = document.getElementById("screen-db-detail");
+
+// Login
+const loginForm  = document.getElementById("login-form");
+const loginUser  = document.getElementById("login-user");
+const loginPass  = document.getElementById("login-pass");
 const loginError = document.getElementById("login-error");
 
-// Elementos da Tela do Terminal
-const terminalScreen = document.getElementById("terminal-screen");
-const searchForm = document.getElementById("search-form");
+// Desktop
+const deskUser      = document.getElementById("desk-user");
+const deskWelcome   = document.getElementById("desk-welcome");
+const deskFileCount = document.getElementById("desk-filecount");
+
+// Terminal
+const searchForm  = document.getElementById("search-form");
 const searchInput = document.getElementById("search-input");
-const output = document.getElementById("output");
+const output      = document.getElementById("output");
+
+// Database
+const dbSearch = document.getElementById("db-search");
+const dbTbody  = document.getElementById("db-tbody");
+const dbCount  = document.getElementById("db-count");
 
 // ==========================================
-// CONFIGURAÇÕES GERAIS E ESTADO
+// ESTADO GLOBAL
 // ==========================================
 
-const TYPE_DELAY_MS = 8;
+const TYPE_DELAY_MS      = 8;
 const TYPE_DELAY_FAST_MS = 0;
 
 let printQueue = Promise.resolve();
-let isTyping = false;
+let isTyping   = false;
 let skipTyping = false;
 
-let currentUser = null; // Guardará quem logou (para o prompt do terminal)
+let currentUser          = null;
+let terminalInitialized  = false;
 
 let lastResults = {
   source: null,
@@ -36,60 +52,137 @@ let lastResults = {
 };
 
 let currentArticle = null;
-
 const commandHistory = [];
 let historyIndex = -1;
 
+// Database
+let dbRecords  = [];
+let dbFiltered = [];
+
 // ==========================================
-// LÓGICA DE LOGIN
+// RELÓGIO EM TEMPO REAL
 // ==========================================
 
-// Precisamos checar se o formulário existe na tela (para não dar erro)
+function updateClock() {
+  const now  = new Date();
+  const time = now.toLocaleTimeString("pt-BR", { hour12: false });
+  const date = now.toLocaleDateString("pt-BR");
+  const str  = `${date}  ${time}`;
+  document.querySelectorAll(".os-clock").forEach(el => (el.textContent = str));
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ==========================================
+// NAVEGAÇÃO ENTRE TELAS
+// ==========================================
+
+function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+}
+
+function openProgram(name) {
+  if (name === "terminal") {
+    showScreen("screen-terminal");
+    searchInput.focus();
+    if (!terminalInitialized) {
+      terminalInitialized = true;
+      output.innerHTML = "";
+      printLine(`Acesso concedido. Bem-vindo(a), ${currentUser.name}.`, "success-message");
+      printLine(`Nível de Acesso: [${currentUser.role.toUpperCase()}]`);
+      printLine(`Hora de conexão: ${new Date().toLocaleString("pt-BR")}`);
+      printLine(``);
+      printLine(`Digite 'help' para ver os comandos disponíveis.`);
+    }
+  } else if (name === "database") {
+    showScreen("screen-database");
+    loadDatabase();
+    if (dbSearch) {
+      dbSearch.focus();
+      dbSearch.select();
+    }
+  }
+}
+
+function closeProgram() {
+  showScreen("screen-desktop");
+}
+
+// ==========================================
+// TECLA ESC — navegar para trás
+// ==========================================
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    if (screenDbDetail && !screenDbDetail.classList.contains("hidden")) {
+      showScreen("screen-database");
+      return;
+    }
+    if (screenDatabase && !screenDatabase.classList.contains("hidden")) {
+      closeProgram();
+      return;
+    }
+    if (screenTerminal && !screenTerminal.classList.contains("hidden")) {
+      closeProgram();
+      return;
+    }
+  }
+  // Pula animação de digitação ao apertar Enter
+  if (e.key === "Enter" && isTyping) {
+    e.preventDefault();
+    skipTyping = true;
+  }
+});
+
+// ==========================================
+// LOGIN
+// ==========================================
+
 if (loginForm) {
   loginForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-  
+
     const user = loginUser.value.trim();
     const pass = loginPass.value.trim();
-  
+
     try {
-      // 1. Envia os dados para o seu server.js verificar
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: user, password: pass })
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: user, password: pass }),
       });
-  
+
       const data = await response.json();
-  
-      // 2. Verifica a resposta do servidor
+
       if (response.ok && data.success) {
-        // Guarda os dados que o servidor confirmou
         currentUser = data.user;
-  
-        if (loginError) loginError.classList.add("hidden");
-  
-        // Transição de telas
-        loginScreen.classList.add("hidden");
-        terminalScreen.classList.remove("hidden");
-        searchInput.focus();
-        output.innerHTML = "";
-  
-        // Mensagem personalizada usando o nome verdadeiro que veio do users.json
-        await printLine(`Acesso concedido. Bem-vindo(a), ${currentUser.name}.`, "success-message");
-        await printLine(`Nível de Acesso: [${currentUser.role.toUpperCase()}]`);
-        await printLine("Digite 'help' para ver os comandos disponíveis.");
+        loginError.classList.add("hidden");
+
+        // Atualiza informações do desktop
+        if (deskUser) {
+          deskUser.textContent = `${currentUser.name.toUpperCase()}  |  NÍVEL: ${currentUser.role.toUpperCase()}`;
+        }
+        if (deskWelcome) {
+          deskWelcome.textContent = `  BEM-VINDO(A), ${currentUser.name.toUpperCase()}  — ACESSO CONCEDIDO`;
+        }
+
+        showScreen("screen-desktop");
+
+        // Pré-carrega contagem de registros em background
+        fetch("/api/worldcraft/all")
+          .then((r) => r.json())
+          .then((d) => {
+            const count = (d.records || []).length;
+            if (deskFileCount) deskFileCount.textContent = `REGISTROS: ${count}`;
+          })
+          .catch(() => {});
       } else {
-        // Se o servidor recusou (senha errada ou usuário não existe)
-        throw new Error(data.message || "Acesso Negado.");
+        throw new Error(data.message || "Acesso negado.");
       }
     } catch (err) {
-      // Mostra o erro na tela
-      if (loginError) {
-        loginError.classList.remove("hidden");
-        // Você pode até exibir o texto do erro que o servidor mandou
-        loginError.querySelector("span").textContent = `[ERRO] ${err.message}`;
-      }
+      loginError.classList.remove("hidden");
+      loginError.querySelector("span").textContent = `[ERRO] ${err.message}`;
       loginPass.value = "";
       loginPass.focus();
     }
@@ -97,7 +190,148 @@ if (loginForm) {
 }
 
 // ==========================================
-// LÓGICA DO TERMINAL (EVENTOS)
+// DATABASE — carregar e renderizar
+// ==========================================
+
+async function loadDatabase() {
+  // Só recarrega se ainda não tiver dados
+  if (dbRecords.length > 0) {
+    renderDatabase();
+    return;
+  }
+
+  if (dbTbody) {
+    dbTbody.innerHTML =
+      '<tr><td colspan="3" class="dim loading-cell">Carregando registros...</td></tr>';
+  }
+
+  try {
+    const res = await fetch("/api/worldcraft/all");
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+
+    dbRecords  = data.records || [];
+    dbFiltered = [...dbRecords];
+
+    renderDatabase();
+
+    if (dbCount)  dbCount.textContent  = `${dbRecords.length} registros`;
+    if (deskFileCount) deskFileCount.textContent = `REGISTROS: ${dbRecords.length}`;
+  } catch (err) {
+    if (dbTbody) {
+      dbTbody.innerHTML = `<tr><td colspan="3" class="error loading-cell">Erro ao carregar database: ${err.message}</td></tr>`;
+    }
+  }
+}
+
+function renderDatabase() {
+  if (!dbTbody) return;
+
+  if (!dbFiltered.length) {
+    dbTbody.innerHTML =
+      '<tr><td colspan="3" class="dim loading-cell">Nenhum registro encontrado.</td></tr>';
+    if (dbCount) dbCount.textContent = "0 registros";
+    return;
+  }
+
+  dbTbody.innerHTML = "";
+
+  dbFiltered.forEach((record) => {
+    const tr  = document.createElement("tr");
+    const tags = (record.tags || []).join(", ") || "—";
+
+    tr.innerHTML = `
+      <td class="col-cat">${escapeHtml(record.categoria || "—")}</td>
+      <td class="col-title">${escapeHtml(record.title)}</td>
+      <td class="col-tags">${escapeHtml(tags)}</td>
+    `;
+
+    tr.addEventListener("click", () => openDbRecord(record.id));
+    dbTbody.appendChild(tr);
+  });
+
+  if (dbCount) dbCount.textContent = `${dbFiltered.length} registros`;
+}
+
+// Filtro de busca na database
+if (dbSearch) {
+  dbSearch.addEventListener("input", function () {
+    const term = this.value.toLowerCase().trim();
+    dbFiltered = term
+      ? dbRecords.filter(
+          (r) =>
+            r.title.toLowerCase().includes(term) ||
+            (r.categoria || "").toLowerCase().includes(term) ||
+            (r.tags || []).join(" ").toLowerCase().includes(term)
+        )
+      : [...dbRecords];
+    renderDatabase();
+  });
+}
+
+// ==========================================
+// DATABASE — abrir registro individual
+// ==========================================
+
+async function openDbRecord(id) {
+  showScreen("screen-db-detail");
+
+  const titleEl   = document.getElementById("detail-prog-title");
+  const metaEl    = document.getElementById("detail-meta");
+  const contentEl = document.getElementById("detail-content");
+
+  if (titleEl)   titleEl.textContent  = "DATABASE.EXE — CARREGANDO...";
+  if (metaEl)    metaEl.innerHTML     = "";
+  if (contentEl) contentEl.innerHTML  = '<div class="line dim">Aguardando dados...</div>';
+
+  try {
+    const res = await fetch(`/api/article/worldcraft/${encodeURIComponent(id)}`);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+
+    const record = dbRecords.find((r) => r.id === id);
+
+    if (titleEl) {
+      titleEl.textContent = `DATABASE.EXE — ${data.title.toUpperCase()}`;
+    }
+
+    if (metaEl) {
+      metaEl.innerHTML = `
+        <div class="meta-row">
+          <span class="meta-label">TÍTULO    :</span>
+          <span class="meta-value">${escapeHtml(data.title)}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">CATEGORIA :</span>
+          <span class="meta-value">${escapeHtml(record?.categoria || "—")}</span>
+        </div>
+        <div class="meta-row">
+          <span class="meta-label">TAGS      :</span>
+          <span class="meta-value">${escapeHtml((record?.tags || []).join(", ") || "—")}</span>
+        </div>
+      `;
+    }
+
+    if (contentEl) {
+      contentEl.innerHTML = "";
+      const lines = (data.content || "Sem conteúdo disponível.").split(/\r?\n/);
+      lines.forEach((lineText) => {
+        const div = document.createElement("div");
+        div.className = "line";
+        div.textContent = lineText;
+        contentEl.appendChild(div);
+      });
+      contentEl.scrollTop = 0;
+    }
+  } catch (err) {
+    if (titleEl)   titleEl.textContent  = "DATABASE.EXE — ERRO";
+    if (contentEl) contentEl.innerHTML  =
+      `<div class="line error">Erro ao carregar registro: ${escapeHtml(err.message)}</div>`;
+  }
+}
+
+// ==========================================
+// TERMINAL — eventos de input
 // ==========================================
 
 searchForm.addEventListener("submit", async (e) => {
@@ -108,10 +342,8 @@ searchForm.addEventListener("submit", async (e) => {
   if (!raw) return;
 
   await printLine(raw);
-
   commandHistory.push(raw);
   historyIndex = -1;
-
   searchInput.value = "";
 
   await handleCommand(raw);
@@ -121,13 +353,8 @@ searchInput.addEventListener("keydown", (e) => {
   if (e.key === "ArrowUp") {
     e.preventDefault();
     if (!commandHistory.length) return;
-
-    if (historyIndex === -1) {
-      historyIndex = commandHistory.length - 1;
-    } else if (historyIndex > 0) {
-      historyIndex--;
-    }
-
+    if (historyIndex === -1) historyIndex = commandHistory.length - 1;
+    else if (historyIndex > 0) historyIndex--;
     searchInput.value = commandHistory[historyIndex] || "";
     searchInput.setSelectionRange(searchInput.value.length, searchInput.value.length);
   }
@@ -135,11 +362,7 @@ searchInput.addEventListener("keydown", (e) => {
   if (e.key === "ArrowDown") {
     e.preventDefault();
     if (!commandHistory.length) return;
-
-    if (historyIndex === -1) {
-      return;
-    }
-
+    if (historyIndex === -1) return;
     if (historyIndex < commandHistory.length - 1) {
       historyIndex++;
       searchInput.value = commandHistory[historyIndex] || "";
@@ -151,26 +374,18 @@ searchInput.addEventListener("keydown", (e) => {
   }
 });
 
-document.addEventListener("keydown", (e) => {
-  // Pula a animação ao apertar Enter
-  if (e.key === "Enter" && isTyping) {
-    e.preventDefault();
-    skipTyping = true;
-  }
-});
-
 // ==========================================
 // COMANDOS DO TERMINAL
 // ==========================================
 
 async function handleCommand(raw) {
   const parts = raw.split(/\s+/);
-  const cmd = (parts[0] || "").toLowerCase();
+  const cmd   = (parts[0] || "").toLowerCase();
 
   if (cmd === "search") {
     const term = parts.slice(1).join(" ");
     if (!term) {
-      await printError('Uso: search <termo>');
+      await printError("Uso: search <termo>");
       return;
     }
     await search(term, "both");
@@ -178,9 +393,11 @@ async function handleCommand(raw) {
   }
 
   if (cmd === "open") {
-    if (parts.length >= 3 &&
+    if (
+      parts.length >= 3 &&
       (parts[1].toLowerCase() === "wikipedia" ||
-        parts[1].toLowerCase() === "worldcraft")) {
+        parts[1].toLowerCase() === "worldcraft")
+    ) {
       const src = parts[1].toLowerCase();
       const ref = parts[2];
       let id = ref;
@@ -190,7 +407,8 @@ async function handleCommand(raw) {
           await printError("Índice inválido.");
           return;
         }
-        const arr = src === "wikipedia" ? lastResults.wikipedia : lastResults.worldcraft;
+        const arr =
+          src === "wikipedia" ? lastResults.wikipedia : lastResults.worldcraft;
         if (!arr[idx]) {
           await printError("Nenhum resultado com esse índice.");
           return;
@@ -203,12 +421,11 @@ async function handleCommand(raw) {
 
     const ref = parts[1];
     if (!ref) {
-      await printError('Uso: open <id> ou open #<indice>');
+      await printError("Uso: open <id> ou open #<indice>");
       return;
     }
 
     let target = null;
-
     if (ref.startsWith("#")) {
       const idx = parseInt(ref.slice(1), 10) - 1;
       if (Number.isNaN(idx) || idx < 0 || !lastResults.combined[idx]) {
@@ -223,7 +440,6 @@ async function handleCommand(raw) {
         return;
       }
     }
-
     await openArticle(target.source, target.id);
     return;
   }
@@ -242,7 +458,7 @@ async function handleCommand(raw) {
 }
 
 // ==========================================
-// FUNÇÕES DE EXIBIÇÃO
+// FUNÇÕES DE EXIBIÇÃO (terminal)
 // ==========================================
 
 function enqueuePrint(fn) {
@@ -250,28 +466,27 @@ function enqueuePrint(fn) {
   return printQueue;
 }
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function createLine(cssClass) {
-  const line = document.createElement("div");
-  line.className = "line";
-  if (cssClass) line.classList.add(cssClass);
+  const div = document.createElement("div");
+  div.className = "line";
+  if (cssClass) div.classList.add(cssClass);
 
   const promptSpan = document.createElement("span");
   promptSpan.className = "prompt";
-  // Muda o visual do prompt dependendo de quem logou
   promptSpan.textContent = "sistema@temperança> ";
 
   const textSpan = document.createElement("span");
   textSpan.textContent = "";
 
-  line.appendChild(promptSpan);
-  line.appendChild(textSpan);
-  output.appendChild(line);
+  div.appendChild(promptSpan);
+  div.appendChild(textSpan);
+  output.appendChild(div);
   output.scrollTop = output.scrollHeight;
-  return { line, textSpan };
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return { line: div, textSpan };
 }
 
 async function typeText(el, text, delayMs = TYPE_DELAY_MS) {
@@ -309,7 +524,7 @@ function printResultItem(index, title, snippet) {
     .replace(/<\/?[^>]+(>|$)/g, "")
     .replace(/\s+/g, " ")
     .trim();
-  return printLineFast(`[#${index}] ${title} - ${safeSnippet}`);
+  return printLineFast(`[#${index}] ${title} — ${safeSnippet}`);
 }
 
 function printError(message) {
@@ -343,13 +558,9 @@ async function searchWikipedia(term) {
     }
 
     lastResults.wikipedia = results;
-
     results.forEach((item) => {
       const index = lastResults.combined.length + 1;
-      lastResults.combined.push({
-        id: item.id,
-        source: "wikipedia",
-      });
+      lastResults.combined.push({ id: item.id, source: "wikipedia" });
       printResultItem(index, item.title, item.snippet);
     });
     await printQueue;
@@ -360,7 +571,9 @@ async function searchWikipedia(term) {
 
 async function searchWorldcraft(term) {
   try {
-    const res = await fetch(`/api/search/worldcraft?term=${encodeURIComponent(term)}`);
+    const res = await fetch(
+      `/api/search/worldcraft?term=${encodeURIComponent(term)}`
+    );
     if (!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
     const results = data.results || [];
@@ -371,24 +584,22 @@ async function searchWorldcraft(term) {
     }
 
     lastResults.worldcraft = results;
-
     results.forEach((item) => {
       const index = lastResults.combined.length + 1;
-      lastResults.combined.push({
-        id: item.id,
-        source: "worldcraft",
-      });
+      lastResults.combined.push({ id: item.id, source: "worldcraft" });
       printResultItem(index, item.title, item.snippet);
     });
     await printQueue;
   } catch (err) {
-    await printError("Erro ao buscar no repositório da Lógica: " + err.message);
+    await printError("Erro ao buscar no repositório: " + err.message);
   }
 }
 
 async function openArticle(source, id) {
   try {
-    const res = await fetch(`/api/article/${source}/${encodeURIComponent(id)}`);
+    const res = await fetch(
+      `/api/article/${source}/${encodeURIComponent(id)}`
+    );
     if (!res.ok) throw new Error("HTTP " + res.status);
     const data = await res.json();
 
@@ -399,18 +610,17 @@ async function openArticle(source, id) {
 
     currentArticle = {
       source,
-      id: String(data.id ?? id),
-      title: data.title,
+      id:      String(data.id ?? id),
+      title:   data.title,
       content: data.content || "",
     };
 
     await printLine(`=== ${data.title} ===`);
     const lines = (data.content || "").split(/\r?\n/);
-    for (const line of lines) {
-      await printLine(line);
+    for (const lineText of lines) {
+      await printLine(lineText);
     }
     await printLine("=== fim ===");
-
   } catch (err) {
     await printError("Erro ao abrir artigo: " + err.message);
   }
@@ -418,17 +628,28 @@ async function openArticle(source, id) {
 
 async function printHelp() {
   await printLine("Comandos disponíveis:");
-  await printLine('  search <termo>           -> busca nos registros');
-  await printLine('  open <id> ou open #<n>   -> abre informação da última busca');
-  await printLine('  clear / cls              -> limpa a tela');
-  await printLine('  help / ?                 -> mostra esta ajuda');
+  await printLine("  search <termo>          -> busca nos registros");
+  await printLine("  open <id> ou open #<n>  -> abre resultado da última busca");
+  await printLine("  clear / cls             -> limpa a tela");
+  await printLine("  help / ?                -> mostra esta ajuda");
 }
 
-// Inicialização
+// ==========================================
+// UTILITÁRIO — escape de HTML
+// ==========================================
+
+function escapeHtml(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// ==========================================
+// INICIALIZAÇÃO
+// ==========================================
+
 window.addEventListener("load", () => {
-  if (loginUser && !loginScreen.classList.contains("hidden")) {
-    loginUser.focus();
-  } else if (searchInput) {
-    searchInput.focus();
-  }
+  if (loginUser) loginUser.focus();
 });
