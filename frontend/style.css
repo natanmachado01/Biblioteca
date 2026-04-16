@@ -1,27 +1,37 @@
 /* =====================================================
-   SISTEMA TEMPERANÇA v2.1 — Interface Retro BBS
-   Estética: Terminal Militar / BBS Anos 80-90
+   SISTEMA TEMPERANÇA v2.1 — Interface Retro OS
+   Estética: Terminal Clássico / Sistema Operacional Anos 80-90
    ===================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 :root {
-  --bg:          #000;
-  --bg-header:   #030d03;
-  --bg-panel:    #020802;
-  --bg-hover:    #001a00;
-  --bg-selected: #002800;
-  --text:        #00cc44;
-  --text-bright: #00ff6a;
-  --text-dim:    #005c22;
-  --text-cyan:   #00ffcc;
-  --border:      #004d1a;
-  --border-hi:   #00aa33;
-  --error:       #ff3333;
-  --warning:     #ffaa00;
-  --glow:        rgba(0, 204, 68, 0.35);
-  --glow-bright: rgba(0, 255, 106, 0.55);
-  --glow-err:    rgba(255, 51, 51, 0.45);
+  /* ── Backgrounds ── */
+  --bg:          #04080f;
+  --bg-header:   #0b1628;
+  --bg-panel:    #070d1c;
+  --bg-hover:    #0f1e38;
+  --bg-selected: #132544;
+
+  /* ── Text ── */
+  --text:        #a8b8c8;
+  --text-bright: #f0c030;
+  --text-dim:    #3a5070;
+  --text-cyan:   #40ccee;
+  --text-white:  #ddd8c8;
+
+  /* ── Borders ── */
+  --border:      #1a3055;
+  --border-hi:   #2a5090;
+
+  /* ── Status ── */
+  --error:       #e04040;
+  --warning:     #f0aa00;
+
+  /* ── Glow effects ── */
+  --glow:        rgba(168, 184, 200, 0.10);
+  --glow-bright: rgba(240, 192, 48, 0.30);
+  --glow-err:    rgba(224, 64, 64, 0.40);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,7 +43,7 @@ body {
   font-family: 'VT323', 'Courier New', monospace;
   font-size: 20px;
   line-height: 1.45;
-  text-shadow: 0 0 5px var(--glow);
+  text-shadow: 0 0 4px var(--glow);
 }
 
 /* ── Efeito CRT: Scanlines ── */
@@ -44,20 +54,20 @@ body::after {
   inset: 0;
   background: linear-gradient(
     rgba(0,0,0,0) 50%,
-    rgba(0,0,0,0.20) 50%
+    rgba(0,0,0,0.14) 50%
   );
   background-size: 100% 4px;
   pointer-events: none;
   z-index: 9999;
 }
 
-/* ── Efeito CRT: Vinheta nas bordas ── */
+/* ── Efeito CRT: Vinheta com leve tinte azul ── */
 body::before {
   content: "";
   display: block;
   position: fixed;
   inset: 0;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.45) 100%);
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,4,20,0.55) 100%);
   pointer-events: none;
   z-index: 9998;
 }
@@ -114,7 +124,37 @@ body::before {
 .os-user     { color: var(--text-dim); flex: 1; text-align: center; font-size: 16px; }
 .os-clock    { color: var(--text-dim); font-size: 16px; margin-left: auto; }
 
-.status-dot  { color: var(--text-bright); font-size: 14px; }
+.status-dot  { color: var(--text-cyan); font-size: 14px; }
+
+/* ── Barra de teclas de função (estilo DOS) ── */
+.fkey-bar {
+  display: flex;
+  align-items: stretch;
+  background: var(--text-dim);
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.fkey {
+  display: inline-flex;
+  align-items: center;
+  cursor: default;
+}
+
+.fkey-num {
+  background: var(--text);
+  color: var(--bg);
+  padding: 2px 5px;
+  font-size: 15px;
+  letter-spacing: 0;
+}
+
+.fkey-label {
+  background: var(--border-hi);
+  color: var(--text-white);
+  padding: 2px 8px 2px 3px;
+  font-size: 16px;
+}
 
 /* =====================================================
    TELA DE LOGIN
@@ -125,27 +165,28 @@ body::before {
   background: var(--bg-panel);
   width: 100%;
   max-width: 580px;
-  box-shadow: 0 0 25px rgba(0, 170, 51, 0.2);
+  box-shadow: 0 0 30px rgba(42, 80, 144, 0.30);
 }
 
 .win-header {
   display: flex;
   align-items: center;
-  padding: 5px 12px;
-  background: var(--bg-header);
+  padding: 4px 12px;
+  background: var(--border-hi);
   border-bottom: 1px solid var(--border);
 }
 
 .win-dots { display: flex; gap: 6px; margin-right: 10px; }
 .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
-.dot.red    { background: #ff5f56; }
-.dot.yellow { background: #ffbd2e; }
-.dot.green  { background: #27c93f; }
+.dot.red    { background: #aa2222; }
+.dot.yellow { background: #aa7700; }
+.dot.green  { background: #1a66bb; }
 
 .win-title {
-  color: var(--text-bright);
+  color: #ffffff;
   font-size: 17px;
-  text-shadow: 0 0 6px var(--glow-bright);
+  text-shadow: none;
+  letter-spacing: 1px;
 }
 
 .win-body {
@@ -276,7 +317,7 @@ input::placeholder     { color: var(--text-dim); letter-spacing: normal; }
 .program-tile:hover {
   background: var(--bg-hover);
   border-color: var(--text-bright);
-  box-shadow: 0 0 22px rgba(0, 255, 106, 0.12);
+  box-shadow: 0 0 22px rgba(240, 192, 48, 0.12);
 }
 
 .program-tile:hover .tile-name {
@@ -313,7 +354,7 @@ input::placeholder     { color: var(--text-dim); letter-spacing: normal; }
 }
 
 .output::-webkit-scrollbar       { width: 8px; }
-.output::-webkit-scrollbar-track { background: #001100; }
+.output::-webkit-scrollbar-track { background: #06101e; }
 .output::-webkit-scrollbar-thumb { background: var(--border-hi); }
 
 .output .line { margin-bottom: 3px; }
@@ -342,7 +383,7 @@ input::placeholder     { color: var(--text-dim); letter-spacing: normal; }
 .hidden-btn { display: none; }
 
 .error-message   { color: var(--error);    text-shadow: 0 0 5px var(--glow-err); }
-.success-message { color: var(--text-cyan); text-shadow: 0 0 5px rgba(0,255,204,0.45); }
+.success-message { color: var(--text-cyan); text-shadow: 0 0 5px rgba(64, 204, 238, 0.40); }
 
 /* =====================================================
    DATABASE — lista
@@ -383,7 +424,7 @@ input::placeholder     { color: var(--text-dim); letter-spacing: normal; }
 }
 
 .db-table-wrap::-webkit-scrollbar       { width: 8px; }
-.db-table-wrap::-webkit-scrollbar-track { background: #001100; }
+.db-table-wrap::-webkit-scrollbar-track { background: #06101e; }
 .db-table-wrap::-webkit-scrollbar-thumb { background: var(--border-hi); }
 
 .db-table {
@@ -414,8 +455,8 @@ input::placeholder     { color: var(--text-dim); letter-spacing: normal; }
 
 .db-table td {
   padding: 5px 14px;
-  border-bottom: 1px solid #001500;
-  border-right: 1px solid #001500;
+  border-bottom: 1px solid #0b1628;
+  border-right: 1px solid #0b1628;
   vertical-align: top;
 }
 
@@ -459,5 +500,5 @@ input::placeholder     { color: var(--text-dim); letter-spacing: normal; }
 }
 
 #detail-content::-webkit-scrollbar       { width: 8px; }
-#detail-content::-webkit-scrollbar-track { background: #001100; }
+#detail-content::-webkit-scrollbar-track { background: #06101e; }
 #detail-content::-webkit-scrollbar-thumb { background: var(--border-hi); }
