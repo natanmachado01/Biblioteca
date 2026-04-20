@@ -1,14 +1,37 @@
 [
   {
+    "id": "64bb9d10-1511-4715-a0b4-c8644652ac92",
+    "title": "Longinus",
+    "summary": "Sem descrição disponível no banco de dados.",
+    "content": "Arquivo corrompido ou sem dados registrados.",
+    "categoria": "Divindade",
+    "tags": [],
+    "source": "worldcraft",
+    "_indexHash": "9eb11dc40929360407eff554af836850"
+  },
+  {
+    "id": "3122fb76-9dad-4dd2-88ab-8fe8a3a6ce1d",
+    "title": "Abigail Senka",
+    "summary": "Última descendente da família-militar Senka.\n\nFilha única que nunca teve vontade de se tornar mãe. S...",
+    "content": "===================================\n[ DADOS DO REGISTRO ]\n- IDADE: 40\n- OCUPAÇÃO: 1* Tenente\n- STATUS: Desconhecido\n===================================\n\nÚltima descendente da família-militar Senka.\n\nFilha única que nunca teve vontade de se tornar mãe. Seguiu carreira militar até decidir se aposentar.\n\nJornada no exercito foi notável, participou de forças-tarefa de pacificação em diferentes partes do mundo, sendo reconhecida pelos superiores e convidada a se juntar a Equipe de Operações Especiais - um grupo composto por pouquíssimas pessoas extremamente competentes que era designado para missões de alta periculosidade.\n\nJunto de Robin Roussell, Abigail era a segunda bússola moral do grupo. Pisava no freio quando fosse necessário antes que todos cruzassem uma linha impossível de se retornar, ao menos foi o que ela tentou fazer. Algumas missões, o comportamento violento de Daniel, a morte de Robin e o fracasso da última missão das Operações Especiais fizeram com que Abigail se desligasse da equipe.",
+    "categoria": "Personagem",
+    "tags": [
+      "Eco"
+    ],
+    "source": "worldcraft",
+    "_indexHash": "516f57cbd224ddfd00d954a1563a72c8"
+  },
+  {
     "id": "4a296cb4-8bee-431a-9231-41e21d034440",
     "title": "Arthur D'avilla",
     "summary": "Not a good man but a perfect soldier\n\n...",
-    "content": "===================================\n[ DADOS DO REGISTRO ]\n- AGE: 46\n- STATUS: Vivo\n- OCCUPATION: Comandante do Exército\n===================================\n\nNot a good man but a perfect soldier",
+    "content": "===================================\n[ DADOS DO REGISTRO ]\n- IDADE: 46\n- OCUPAÇÃO: Comandante do Exército\n- STATUS: Vivo\n===================================\n\nNot a good man but a perfect soldier",
     "categoria": "Personagem",
     "tags": [
       "Competidor"
     ],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "0aaa937ed4bb5d34dd81111f8d033d9a"
   },
   {
     "id": "c624955e-503d-49fa-b798-387561b7e87b",
@@ -19,7 +42,8 @@
     "tags": [
       "Eco"
     ],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "df2d99482e3a2cbf0ec4b913d04d047a"
   },
   {
     "id": "4f6f65cf-2982-4d6c-a8f7-b1dacdc4d88b",
@@ -30,7 +54,8 @@
     "tags": [
       "Competidor"
     ],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "dae175236523358832ea71e812f2e804"
   },
   {
     "id": "4799a999-555f-46e1-acc6-5be8e91177d8",
@@ -41,7 +66,8 @@
     "tags": [
       "Eco"
     ],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "c59bde820f92248a83e9c75b1b836ede"
   },
   {
     "id": "0f301fef-c7dd-457f-9707-4b6953582a42",
@@ -52,7 +78,8 @@
     "tags": [
       "Competidor"
     ],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "bebf7cc2a623238a6eb956ddbadb4336"
   },
   {
     "id": "625a80f9-d15e-41df-b01e-7f4dde14914e",
@@ -63,7 +90,8 @@
     "tags": [
       "Competidor"
     ],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "e82153f5ec4c19f9073abc21ee9aa457"
   },
   {
     "id": "4a224f50-ea01-4875-aa3b-6d7ca4dcd812",
@@ -74,7 +102,8 @@
     "tags": [
       "Culto do Abismo"
     ],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "3bf3e18d8c25c303d2aeff4fd73e8716"
   },
   {
     "id": "88518c07-565c-4b11-aaf6-40d13b35dc9e",
@@ -85,7 +114,8 @@
     "tags": [
       "Competidor"
     ],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "bbd3187427a42663bae988d09fcbbd7f"
   },
   {
     "id": "8628f1f5-1789-4ccf-a09b-bedadc2e7885",
@@ -96,7 +126,8 @@
     "tags": [
       "Competidor"
     ],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "19268459c3fcc54b9ae5c51c05b7e608"
   },
   {
     "id": "aebe6fb3-4f5d-4815-afb7-83083fdd27ec",
@@ -107,7 +138,8 @@
     "tags": [
       "Subterrâneo"
     ],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "10b6220b3abf2c75ce8ad9d84fb0f0ca"
   },
   {
     "id": "46f31380-0f27-4624-bb83-067f18611a8f",
@@ -116,7 +148,8 @@
     "content": "Arquivo corrompido ou sem dados registrados.",
     "categoria": "Organização",
     "tags": [],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "a4acf3fa2150112ca9f92764f15076c2"
   },
   {
     "id": "27e69d1b-b6a3-4d4d-91bc-1555495737aa",
@@ -125,7 +158,8 @@
     "content": "Arquivo corrompido ou sem dados registrados.",
     "categoria": "Item",
     "tags": [],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "9629860d83dcf43f540eb96b5f6ce69f"
   },
   {
     "id": "033c6716-a434-42a8-901b-b87ecb3c6f1f",
@@ -134,7 +168,8 @@
     "content": "Arquivo corrompido ou sem dados registrados.",
     "categoria": "Conceito",
     "tags": [],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "4f1e153df5b37bd0b71ef7c88a4aa5d9"
   },
   {
     "id": "f6f204c0-caa3-4718-8451-1fb7357928a5",
@@ -143,16 +178,8 @@
     "content": "Arquivo corrompido ou sem dados registrados.",
     "categoria": "Evento",
     "tags": [],
-    "source": "worldcraft"
-  },
-  {
-    "id": "64bb9d10-1511-4715-a0b4-c8644652ac92",
-    "title": "Longinus",
-    "summary": "Sem descrição disponível no banco de dados.",
-    "content": "Arquivo corrompido ou sem dados registrados.",
-    "categoria": "Divindade",
-    "tags": [],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "d2e1d48fd1a3a348c1ff4a1cdd7db523"
   },
   {
     "id": "0e5cc2ee-8e48-40e2-8248-41067a125bbf",
@@ -161,6 +188,7 @@
     "content": "Arquivo corrompido ou sem dados registrados.",
     "categoria": "Criatura",
     "tags": [],
-    "source": "worldcraft"
+    "source": "worldcraft",
+    "_indexHash": "9a2f584e046c71835891565f24736e41"
   }
 ]
